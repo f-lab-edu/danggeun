@@ -20,11 +20,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // mysql 추가
+    // mysql
     implementation 'mysql:mysql-connector-java:5.1.49'
+
+    // jdbc
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
     // lombok
@@ -32,6 +31,24 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // session-redis
+    implementation 'org.springframework.session:spring-session-data-redis'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // validate
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // mail send
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
