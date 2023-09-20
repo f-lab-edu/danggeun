@@ -1,6 +1,7 @@
 package com.danggeun.article.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,12 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.danggeun.article.dto.ArticleDTO;
-import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
@@ -76,23 +75,24 @@ public class ArticleController {
 	}
 
 	/**
-	 * 게시글 목록 조회
-	 * @param articleType
-	 * @return List<Aritcle>
-	 */
-	@GetMapping
-	public String articles(@RequestParam(value = "articleType") ArticleType articleType) {
-		return "Artcle list ok " + articleType;
-	}
-
-	/**
 	 * 게시글 상세 조회
 	 * @param articleId
 	 * @return ArticleDTO
 	 */
 	@GetMapping(value = "/{articleId}")
-	public String articleById(@PathVariable(value = "articleId") String articleId) {
-		return "searchArtcle ok " + articleId;
+	public ResponseEntity<ArticleDTO> articleById(@PathVariable(value = "articleId") String articleId) {
+		ArticleDTO result = articleService.findById(articleId);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	/**
+	 * 게시글 전체 조회
+	 * @return List<ArticleDTO>
+	 */
+	@GetMapping
+	public ResponseEntity<List<ArticleDTO>> articleById() {
+		List<ArticleDTO> result = articleService.findByAll();
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 }
