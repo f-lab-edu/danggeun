@@ -100,4 +100,17 @@ class ArticleTest {
 		});
 
 	}
+
+	/**
+	 * 게시글 조회 시 없는 게시물의 경우 오류 발생
+	 */
+	@Test
+	@DisplayName("존재하지 않는 게시물ID 로 게시물 조회 시 오류 발생")
+	void articleNotExist() {
+		String articleId = "ARTICLEnonono";
+		assertThrows(IllegalStateException.class, () -> {
+			articleController.articleById(articleId);
+		});
+	}
+
 }

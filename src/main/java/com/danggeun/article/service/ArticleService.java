@@ -1,5 +1,8 @@
 package com.danggeun.article.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +66,28 @@ public class ArticleService {
 		// 게시글 ID 존재 여부 확인 없을 시 IllegalArgumentException 발생
 		articleDTO.hasId();
 		return articleRepository.deleteArticle(articleDTO);
+	}
+
+	/**
+	 * 게시글 상세 조회
+	 * @param articleId
+	 * @return ArticleDTO
+	 */
+	public ArticleDTO findById(String articleId) {
+		Optional<ArticleDTO> result = articleRepository.findById(articleId);
+		if (result.isPresent()) {
+			return result.get();
+		} else {
+			throw new IllegalStateException("존재하지 않는 게시물 입니다.");
+		}
+	}
+
+	/**
+	 * 게시글 전체 조회
+	 * @return List<ArticleDTO>
+	 */
+	public List<ArticleDTO> findByAll() {
+		return articleRepository.findByAll();
 	}
 
 	/**

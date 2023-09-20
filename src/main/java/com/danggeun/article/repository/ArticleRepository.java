@@ -1,5 +1,6 @@
 package com.danggeun.article.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.danggeun.article.dto.ArticleDTO;
@@ -41,5 +42,11 @@ public interface ArticleRepository {
 	 * @return Optional<ArticleDTO>
 	 */
 	public Optional<ArticleDTO> findById(String id);
+
+	/**
+	 * 게시글 전체 조회
+	 * @return List<ArticleDTO>
+	 */
+	public List<ArticleDTO> findByAll();
 
 }

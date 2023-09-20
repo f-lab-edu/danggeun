@@ -139,6 +139,15 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	}
 
 	/**
+	 * 게시글 전제 조회
+	 * @return
+	 */
+	@Override
+	public List<ArticleDTO> findByAll() {
+		return jdbcTemplate.query("SELECT * FROM article", articleRowMapper());
+	}
+
+	/**
 	 * CRUD 중복 내용 메소드
 	 * @param sql
 	 * @param param
