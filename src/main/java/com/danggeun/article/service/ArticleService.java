@@ -34,6 +34,10 @@ public class ArticleService {
 		validateDuplicateArticle(articleId);
 
 		articleDTO.setArticleId(articleId);
+
+		// 게시글 타입별 필수 값 체크
+		articleDTO.validateArticleNullable(articleDTO);
+
 		// DTO -> ENTITY 변환 시작
 
 		// DTO -> ENTITY 변환 종료
@@ -47,6 +51,12 @@ public class ArticleService {
 	 * @return ArticleDTO
 	 */
 	public ArticleDTO modifyArticle(ArticleDTO articleDTO) {
+		// 게시글 ID 존재 여부 확인 없을 시 IllegalArgumentException 발생
+		articleDTO.hasId();
+
+		// 게시글 타입별 필수 값 체크
+		articleDTO.validateArticleNullable(articleDTO);
+
 		return articleRepository.modifyArticle(articleDTO);
 	}
 
@@ -56,6 +66,8 @@ public class ArticleService {
 	 * @return ArticleDTO
 	 */
 	public ArticleDTO deleteArticle(ArticleDTO articleDTO) {
+		// 게시글 ID 존재 여부 확인 없을 시 IllegalArgumentException 발생
+		articleDTO.hasId();
 		return articleRepository.deleteArticle(articleDTO);
 	}
 

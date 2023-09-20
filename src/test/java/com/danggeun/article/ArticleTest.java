@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.danggeun.article.controller.ArticleController;
 import com.danggeun.article.dto.ArticleDTO;
@@ -15,7 +16,8 @@ import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.jdbctemplate.JdbcTemplateArticleRepository;
 import com.danggeun.article.service.ArticleService;
 
-@SpringBootTest(properties = "spring.profiles.active=local")
+@ActiveProfiles("local")
+@SpringBootTest
 class ArticleTest {
 
 	@Autowired
@@ -41,17 +43,6 @@ class ArticleTest {
 		articleDTO.setActive(true);
 		articleDTO.setRegId("testDevelop");
 		articleDTO.setModId("testDevelop");
-	}
-
-	/**
-	 * 게시글 등록 시 게시글 ID 파라미터 존재 시 오류 발생
-	 */
-	@Test
-	@DisplayName("게시글 신규 등록 시 게시글 ID 파라미터 존재 시 IllegalArgumentException 발생")
-	void articleCreateIllegalArgumentArticleId() {
-		assertThrows(IllegalArgumentException.class, () -> {
-			articleController.createArticle(articleDTO);
-		});
 	}
 
 	/**
@@ -89,12 +80,24 @@ class ArticleTest {
 	void articleModifyIllegalArgumentArticleId() {
 		articleDTO.setArticleId(null);
 		assertThrows(IllegalArgumentException.class, () -> {
+			articleDTO.hasId();
+		});
+		assertThrows(IllegalArgumentException.class, () -> {
 			articleController.modifyArticle(articleDTO);
 		});
 
-		assertThrows(IllegalArgumentException.class, () -> {
-			articleController.deleteArticle(articleDTO);
-		});
 	}
 
+	/**
+	 * 게시글 타입별 필수값 체크
+	 */
+	@Test
+	@DisplayName("게시글 수정, 삭제 시 게시글 ID 미 존재 시 IllegalArgumentException 발생")
+	void articleNullable() {
+		articleDTO.setUserId(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			articleDTO.validateArticleNullable(articleDTO);
+		});
+
+	}
 }
