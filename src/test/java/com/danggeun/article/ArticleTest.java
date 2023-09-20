@@ -41,8 +41,8 @@ class ArticleTest {
 		articleDTO.setContext("test context");
 		articleDTO.setArticleType(ArticleType.NOMAL);
 		articleDTO.setActive(true);
-		articleDTO.setRegId("testDevelop");
-		articleDTO.setModId("testDevelop");
+		articleDTO.setRegisteredId("testDevelop");
+		articleDTO.setModifiedId("testDevelop");
 	}
 
 	/**

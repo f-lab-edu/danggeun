@@ -1,24 +1,18 @@
 package com.danggeun.article.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.repository.ArticleRepository;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ArticleService {
 
 	private final ArticleRepository articleRepository;
-
-	@Autowired
-	public ArticleService(ArticleRepository articleRepository) {
-		this.articleRepository = articleRepository;
-	}
 
 	/**
 	 * 게시글 생성

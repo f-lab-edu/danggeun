@@ -38,7 +38,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 				"(article_id, user_id, comment_id, region_id, group_id, subject, context, article_gb, price, active, reg_dt, reg_id, mod_dt, mod_id)")
 			.append("VALUES")
 			.append(
-				"(:articleId, :userId, :commentId, :regionId, :groupId, :subject, :context, :articleType, :price, :active, now(), :regId, now(), :modId)");
+				"(:articleId, :userId, :commentId, :regionId, :groupId, :subject, :context, :articleType, :price, :active, now(), :registeredId, now(), :modifiedId)");
 
 		// 파라미터 매칭
 		// articleType enum으로 인해서 BeanPropertySqlParameterSource 보다는 Map으로 직접 지정
@@ -53,8 +53,8 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 			.addValue("articleType", article.getArticleType().getNum())
 			.addValue("price", article.getPrice())
 			.addValue("active", article.isActive())
-			.addValue("regId", article.getRegId())
-			.addValue("modId", article.getModId());
+			.addValue("registeredId", article.getRegisteredId())
+			.addValue("modifiedId", article.getRegisteredId());
 
 		// DB 등록
 		save(sql.toString(), param, this.getClass().getSimpleName());
@@ -74,7 +74,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 			.append("subject = :subject ,")
 			.append("context = :context ,")
 			.append("mod_dt = now() ,")
-			.append("mod_id = :modId ")
+			.append("mod_id = :modifiedId ")
 			.append("WHERE article_id = :articleId");
 
 		// 파라미터 매칭
@@ -96,7 +96,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 		StringBuilder sql = new StringBuilder("UPDATE article SET ")
 			.append("active = 0 ,")
 			.append("mod_dt = now() ,")
-			.append("mod_id = :modId ")
+			.append("mod_id = :modifiedId ")
 			.append("WHERE article_id = :articleId");
 
 		// 파라미터 매칭
@@ -166,10 +166,10 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 			articleDTO.setArticleType(validateArticleType(rs.getInt("article_gb")));
 			articleDTO.setPrice(rs.getInt("price"));
 			articleDTO.setActive(rs.getBoolean("active"));
-			articleDTO.setRegDt(rs.getDate("reg_dt"));
-			articleDTO.setRegId(rs.getString("reg_id"));
-			articleDTO.setModDt(rs.getDate("mod_dt"));
-			articleDTO.setModId(rs.getString("mod_id"));
+			articleDTO.setRegisteredDate(rs.getDate("reg_dt"));
+			articleDTO.setRegisteredId(rs.getString("reg_id"));
+			articleDTO.setModifiedDate(rs.getDate("mod_dt"));
+			articleDTO.setModifiedId(rs.getString("mod_id"));
 			return articleDTO;
 		};
 	}

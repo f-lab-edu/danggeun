@@ -2,7 +2,6 @@ package com.danggeun.article.controller;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +20,16 @@ import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.service.ArticleService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequestMapping(value = "/api/articles")
 @RestController
+@RequiredArgsConstructor
 public class ArticleController {
 
 	private final ArticleService articleService;
-
-	@Autowired
-	public ArticleController(ArticleService articleService) {
-		this.articleService = articleService;
-	}
 
 	/**
 	 * 게시글 생성
