@@ -31,10 +31,10 @@ public class ArticleDTO {
 	private ArticleType articleType;
 	private int price;
 	private boolean active;
-	private Date regDt;
-	private String regId;
-	private Date modDt;
-	private String modId;
+	private Date registeredDate;
+	private String registeredId;
+	private Date modifiedDate;
+	private String modifiedId;
 
 	public void hasId() {
 		if (!StringUtils.hasText(this.getArticleId())) {

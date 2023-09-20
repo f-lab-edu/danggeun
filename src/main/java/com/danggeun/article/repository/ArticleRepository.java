@@ -2,11 +2,8 @@ package com.danggeun.article.repository;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
 import com.danggeun.article.dto.ArticleDTO;
 
-@Service
 public interface ArticleRepository {
 
 	/**
