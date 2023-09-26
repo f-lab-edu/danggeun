@@ -6,8 +6,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.danggeun.commons.util.RedisUtil;
-import com.danggeun.mail.domain.Mail;
+import com.danggeun.commons.util.CertificationNumber;
+import com.danggeun.commons.util.EmailRedisService;
+import com.danggeun.mail.dto.MailDTO;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -16,28 +17,47 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class MailService {
-	public static final long DURATION = 180L;
+	private static final long DURATION = 180L;
 
 	private final JavaMailSender javaMailSender;
-	private final RedisUtil redisUtil;
+	private final EmailRedisService emailRedisService;
+	private final CertificationNumber certificationNumber;
 
-	public void send(Mail mail) throws MessagingException, UnsupportedEncodingException  {
-		if(redisUtil.existData(mail.getTo())){
-			redisUtil.deleteData(mail.getTo());
+	/**
+	 * 이메일 인증번호 발송
+	 * @param mailDTO
+	 * @return MailDTO
+	 */
+	public MailDTO send(MailDTO mailDTO) throws MessagingException, UnsupportedEncodingException {
+
+		// 이메일 null 값, 형식 체크
+		mailDTO.validate();
+
+		if (emailRedisService.exist(mailDTO.getTo())) {
+			emailRedisService.delete(mailDTO.getTo());
 		}
-		createCertificationNumber(mail);
-		MimeMessage message = createMailForm(mail);
-		redisUtil.setDataExpire(mail.getTo(), mail.getCertificationNumber(), DURATION);
+		createCertificationNumber(mailDTO);
+		MimeMessage message = createMailForm(mailDTO);
+		emailRedisService.set(mailDTO.getTo(), mailDTO.getCertificationNumber(), DURATION);
 		javaMailSender.send(message);
+		return mailDTO;
 	}
 
-	public void createCertificationNumber(Mail mail){
+	/**
+	 * 이메일 인증번호 생성
+	 * @param mailDTO
+	 */
+	public void createCertificationNumber(MailDTO mailDTO) {
 		// 이메일 인증번호 5자리 생성
-		String certificationNumber = String.valueOf((int)(Math.random() * (99999 - 10000 + 1)) + 10000);
-		mail.setCertificationNumber(certificationNumber);
+		mailDTO.setCertificationNumber(certificationNumber.getNumber());
 	}
 
-	public MimeMessage createMailForm(Mail mail) throws MessagingException, UnsupportedEncodingException {
+	/**
+	 * 이메일 발송 폼 생성
+	 * @param mailDTO
+	 * @return MimeMessage
+	 */
+	public MimeMessage createMailForm(MailDTO mailDTO) throws MessagingException, UnsupportedEncodingException {
 		MimeMessage message = javaMailSender.createMimeMessage();
 
 		MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
@@ -50,26 +70,31 @@ public class MailService {
 			.append("<div align='center' style='border:1px solid black; font-family:verdana';>")
 			.append("<h3 style='color:blue;'>이메일 인증번호입니다.</h3>")
 			.append("인증번호 : ")
-			.append(mail.getCertificationNumber())
+			.append(mailDTO.getCertificationNumber())
 			.append("<strong>")
 			.append("</strong><div><br/> </div>");
 
-		mail.setFrom("dangguen");
-		mail.setSubject("[ Dangguen 이메일 인증 ]");
-		mail.setText(text.toString());
-		messageHelper.setTo(mail.getTo());
-		messageHelper.setFrom(mail.getFrom(), mail.getFrom());
-		messageHelper.setSubject(mail.getSubject());
-		messageHelper.setText(mail.getText(), true);
+		mailDTO.setFrom("dangguen");
+		mailDTO.setSubject("[ Dangguen 이메일 인증 ]");
+		mailDTO.setText(text.toString());
+		messageHelper.setTo(mailDTO.getTo());
+		messageHelper.setFrom(mailDTO.getFrom(), mailDTO.getFrom());
+		messageHelper.setSubject(mailDTO.getSubject());
+		messageHelper.setText(mailDTO.getText(), true);
 
 		return message;
 	}
 
-	public boolean mailCertification(Mail mail){
-			String generationCode = redisUtil.getData(mail.getTo());
-			if(generationCode == null){
-				return false;
-			}
-			return generationCode.equals(mail.getCertificationNumber());
+	/**
+	 * 이메일 인증번호 확인
+	 * @param mailDTO
+	 * @return boolean
+	 */
+	public boolean mailCertification(MailDTO mailDTO) {
+		String generationCode = emailRedisService.get(mailDTO.getTo());
+		if (generationCode == null) {
+			return false;
+		}
+		return generationCode.equals(mailDTO.getCertificationNumber());
 	}
 }

@@ -1,40 +1,34 @@
 package com.danggeun.user.controller;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.danggeun.user.dto.User;
+import com.danggeun.user.dto.UserDTO;
 import com.danggeun.user.service.UserService;
-import com.google.gson.JsonObject;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Controller
-@RequestMapping(value = "/user")
+@RestController
+@RequestMapping(value = "/api/user")
 public class UserController {
 
 	private final UserService userService;
 
-	@PostMapping("/insert")
-	@ResponseBody
-	public ResponseEntity<String> userInsert(@Valid User user){
-		JsonObject jsonObject = new JsonObject();
+	/**
+	 * 회원 생성
+	 * @param userDTO
+	 * @return UserDTO
+	 */
+	@PostMapping()
+	public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) throws NoSuchAlgorithmException {
 
-		try{
-			userService.join(user);
-			jsonObject.addProperty("result", "회원가입 완료");
-		} catch (Exception e){
-			jsonObject.addProperty("result","회원가입 실패");
-			jsonObject.addProperty("error", e.getMessage());
-
-			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+		return new ResponseEntity<>(userService.join(userDTO), HttpStatus.CREATED);
 	}
 }

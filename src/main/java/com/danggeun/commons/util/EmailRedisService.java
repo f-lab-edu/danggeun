@@ -10,25 +10,30 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class RedisUtil {
+public class EmailRedisService {
 	private final StringRedisTemplate stringRedisTemplate;
 
-	public String getData(String key){
+	public String get(String key) {
 		ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
 		return valueOperations.get(key);
 	}
 
-	public boolean existData(String key){
+	public boolean exist(String key) {
 		return Boolean.TRUE.equals(stringRedisTemplate.hasKey(key));
 	}
 
-	public void setDataExpire(String key, String value, long duration){
+	public void set(String key, String value) {
+		ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+		valueOperations.set(key, value);
+	}
+
+	public void set(String key, String value, long duration) {
 		ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
 		Duration expireDuration = Duration.ofSeconds(duration);
 		valueOperations.set(key, value, expireDuration);
 	}
 
-	public void deleteData(String key){
+	public void delete(String key) {
 		stringRedisTemplate.delete(key);
 	}
 }
