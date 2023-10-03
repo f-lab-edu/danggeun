@@ -1,9 +1,8 @@
 package com.danggeun.article.dto;
 
-import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Objects;
 
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.danggeun.article.enumerate.ArticleType;
@@ -21,11 +20,11 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ArticleDTO {
 
-	private String articleId;
-	private String userId;
-	private String commentId;
-	private String regionId;
-	private String groupId;
+	private Integer articleId;
+	private Integer userId;
+	private Integer commentId;
+	private Integer regionId;
+	private Integer groupId;
 	private String subject;
 	private String context;
 	private ArticleType articleType;
@@ -37,41 +36,32 @@ public class ArticleDTO {
 	private String modifiedId;
 
 	public void hasId() {
-		if (!StringUtils.hasText(this.getArticleId())) {
+		if (Objects.isNull(this.getArticleId())) {
 			throw new IllegalArgumentException("게시글 ID가 없습니다.");
 		}
 	}
 
-	private void hasField(ArticleDTO articleDTO, String... valuse) {
-		String[] colNames = valuse;
-		Field field = null;
-		Object value = null;
-
-		try {
-			for (String colName : colNames) {
-				field = articleDTO.getClass().getDeclaredField(colName);
-				value = field.get(articleDTO);
-
-				if (ObjectUtils.isEmpty(value)) {
-					throw new IllegalArgumentException("게시글 " + colName + "필수값 NULL 입니다.");
-				}
-			}
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
+	public void validateArticleNullable() {
+		if (Objects.isNull(this.getUserId())
+			|| Objects.isNull(this.getRegionId())
+			|| !StringUtils.hasText(this.getSubject())
+			|| !StringUtils.hasText(this.getContext())
+		) {
+			throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
 		}
 
-	}
-
-	public void validateArticleNullable(ArticleDTO articleDTO) {
-		switch (articleDTO.getArticleType()) {
-			case NOMAL:
-				hasField(articleDTO, "articleId", "userId", "subject", "context", "regionId");
+		switch (this.getArticleType()) {
+			case NORMAL:
 				break;
 			case GROUP:
-				hasField(articleDTO, "articleId", "userId", "subject", "context", "regionId", "groupId");
+				if (Objects.isNull(this.getGroupId())) {
+					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
+				}
 				break;
 			case TRADE:
-				hasField(articleDTO, "articleId", "userId", "subject", "context", "regionId", "price");
+				if (Objects.isNull(this.getPrice())) {
+					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
+				}
 				break;
 			default:
 				throw new IllegalArgumentException("정상적인 게시글 타입이 아닙니다.");

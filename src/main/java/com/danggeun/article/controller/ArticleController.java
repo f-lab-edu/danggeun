@@ -1,9 +1,7 @@
 package com.danggeun.article.controller;
 
-import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.service.ArticleService;
@@ -33,51 +30,37 @@ public class ArticleController {
 	/**
 	 * 게시글 생성
 	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @return ResponseEntity
 	 */
 	@PostMapping
 	public ResponseEntity<ArticleDTO> createArticle(@RequestBody ArticleDTO articleDTO) {
-
-		// 신규 articleId 생성
-		articleService.createArticle(articleDTO);
-
-		// 생성된 자원 LocationURL 담을 헤더 생성
-		HttpHeaders responseHeaders = new HttpHeaders();
-
-		URI locationURI = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{articleId}")
-			.buildAndExpand(articleDTO.getArticleId())
-			.toUri();
-
-		responseHeaders.setLocation(locationURI);
-
-		return new ResponseEntity<>(articleDTO, responseHeaders, HttpStatus.CREATED);
+		return new ResponseEntity<>(articleService.createArticle(articleDTO), HttpStatus.CREATED);
 	}
 
 	/**
 	 * 게시글 수정
 	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @return ResponseEntity
 	 */
 	@PutMapping
-	public ResponseEntity<ArticleDTO> modifyArticle(@RequestBody ArticleDTO articleDTO) {
-		return new ResponseEntity<>(articleService.modifyArticle(articleDTO), HttpStatus.OK);
+	public ResponseEntity modifyArticle(@RequestBody ArticleDTO articleDTO) {
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 삭제
 	 * @param articleDTO
-	 * @return HttpStatus.OK
+	 * @return ResponseEntity
 	 */
 	@DeleteMapping
-	public ResponseEntity<ArticleDTO> deleteArticle(@RequestBody ArticleDTO articleDTO) {
-		return new ResponseEntity<>(articleService.deleteArticle(articleDTO), HttpStatus.OK);
+	public ResponseEntity deleteArticle(@RequestBody ArticleDTO articleDTO) {
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 상세 조회
 	 * @param articleId
-	 * @return ArticleDTO
+	 * @return ResponseEntity
 	 */
 	@GetMapping(value = "/{articleId}")
 	public ResponseEntity<ArticleDTO> articleById(@PathVariable(value = "articleId") String articleId) {
@@ -87,7 +70,7 @@ public class ArticleController {
 
 	/**
 	 * 게시글 전체 조회
-	 * @return List<ArticleDTO>
+	 * @return ResponseEntity
 	 */
 	@GetMapping
 	public ResponseEntity<List<ArticleDTO>> articleById() {

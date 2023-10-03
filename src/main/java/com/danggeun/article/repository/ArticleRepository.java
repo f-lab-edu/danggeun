@@ -10,42 +10,34 @@ public interface ArticleRepository {
 	/**
 	 * 게시글 생성
 	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @return Article
 	 */
 	public ArticleDTO createArticle(ArticleDTO articleDTO);
 
 	/**
 	 * 게시글 수정
 	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @return int
 	 */
-	public ArticleDTO modifyArticle(ArticleDTO articleDTO);
+	public int modifyArticle(ArticleDTO articleDTO);
 
 	/**
 	 * 게시글 삭제
 	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @return int
 	 */
-	public ArticleDTO deleteArticle(ArticleDTO articleDTO);
-
-	/**
-	 * 게시글 시퀀스 생성
-	 * @param prefix
-	 * @param name
-	 * @return String
-	 */
-	public String newSequence(String prefix, String name);
+	public int deleteArticle(ArticleDTO articleDTO);
 
 	/**
 	 * 게시글 ID 조회
 	 * @param id
-	 * @return Optional<ArticleDTO>
+	 * @return Optional<Article>
 	 */
 	public Optional<ArticleDTO> findById(String id);
 
 	/**
 	 * 게시글 전체 조회
-	 * @return List<ArticleDTO>
+	 * @return List<Article>
 	 */
 	public List<ArticleDTO> findByAll();
 
