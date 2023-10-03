@@ -4,18 +4,20 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 public class Article {
 
-	private String articleId;
-	private String userId;
-	private String commentId;
-	private String regionId;
-	private String groupId;
+	private Integer articleId;
+	private Integer userId;
+	private Integer commentId;
+	private Integer regionId;
+	private Integer groupId;
 	private String subject;
 	private String context;
 	private int articleType;

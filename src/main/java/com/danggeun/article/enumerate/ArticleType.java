@@ -7,7 +7,7 @@ public enum ArticleType {
 	 * GROUP : 커뮤니티 모집 게시글
 	 * TRADE : 중고거래 게시글
 	 */
-	NOMAL(1),
+	NORMAL(1),
 	GROUP(2),
 	TRADE(3);
 

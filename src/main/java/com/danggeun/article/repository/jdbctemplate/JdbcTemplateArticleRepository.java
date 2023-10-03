@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.enumerate.ArticleType;
@@ -28,22 +27,21 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	/**
 	 * 게시글 생성
 	 * @param article
-	 * @return ArticleDTO
+	 * @return Article
 	 */
 	@Override
 	public ArticleDTO createArticle(ArticleDTO article) {
 		// insert sql
 		StringBuilder sql = new StringBuilder("INSERT INTO article")
 			.append(
-				"(article_id, user_id, comment_id, region_id, group_id, subject, context, article_gb, price, active, reg_dt, reg_id, mod_dt, mod_id)")
+				"(user_id, comment_id, region_id, group_id, subject, context, article_gb, price, active, registered_date, registered_id, modified_date, modified_id)")
 			.append("VALUES")
 			.append(
-				"(:articleId, :userId, :commentId, :regionId, :groupId, :subject, :context, :articleType, :price, :active, now(), :registeredId, now(), :modifiedId)");
+				"(:userId, :commentId, :regionId, :groupId, :subject, :context, :articleType, :price, :active, now(), :registeredId, now(), :modifiedId)");
 
 		// 파라미터 매칭
 		// articleType enum으로 인해서 BeanPropertySqlParameterSource 보다는 Map으로 직접 지정
 		SqlParameterSource param = new MapSqlParameterSource()
-			.addValue("articleId", article.getArticleId())
 			.addValue("userId", article.getUserId())
 			.addValue("commentId", article.getCommentId())
 			.addValue("regionId", article.getRegionId())
@@ -65,65 +63,45 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	/**
 	 * 게시글 수정
 	 * @param article
-	 * @return ArticleDTO
+	 * @return int
 	 */
 	@Override
-	public ArticleDTO modifyArticle(ArticleDTO article) {
+	public int modifyArticle(ArticleDTO article) {
 		// update sql
 		StringBuilder sql = new StringBuilder("UPDATE article SET ")
 			.append("subject = :subject ,")
 			.append("context = :context ,")
-			.append("mod_dt = now() ,")
-			.append("mod_id = :modifiedId ")
+			.append("modified_date = now() ,")
+			.append("modified_id = :modifiedId ")
 			.append("WHERE article_id = :articleId");
 
 		// 파라미터 매칭
 		SqlParameterSource param = new BeanPropertySqlParameterSource(article);
 
 		// DB 등록
-		save(sql.toString(), param, this.getClass().getSimpleName());
+		return save(sql.toString(), param, this.getClass().getSimpleName());
 
-		return article;
 	}
 
 	/**
 	 * 게시글 삭제
 	 * @param article
-	 * @return
+	 * @return int
 	 */
 	@Override
-	public ArticleDTO deleteArticle(ArticleDTO article) {
+	public int deleteArticle(ArticleDTO article) {
 		StringBuilder sql = new StringBuilder("UPDATE article SET ")
 			.append("active = 0 ,")
-			.append("mod_dt = now() ,")
-			.append("mod_id = :modifiedId ")
+			.append("modified_date = now() ,")
+			.append("modified_id = :modifiedId ")
 			.append("WHERE article_id = :articleId");
 
 		// 파라미터 매칭
 		SqlParameterSource param = new BeanPropertySqlParameterSource(article);
 
 		// DB 등록
-		save(sql.toString(), param, this.getClass().getSimpleName());
+		return save(sql.toString(), param, this.getClass().getSimpleName());
 
-		return article;
-	}
-
-	/**
-	 * 게시글 시퀀스 생성
-	 * @param prefix
-	 * @param name
-	 * @return String
-	 */
-	@Override
-	public String newSequence(String prefix, String name) {
-		// 시퀀스 생성 SQL
-		// prefix = ARTICLE / name = article_sequence
-		String sequenceSql = "SELECT CONCAT(?, DATE_FORMAT(NOW(),'%Y%m%d'), LPAD(nextval(?), '6' ,'0')) AS sequence FROM dual";
-		String sequence = jdbcTemplate.queryForObject(sequenceSql, String.class, prefix, name);
-		if (!StringUtils.hasText(sequence)) {
-			throw new IllegalStateException("게시글 시퀀스 생성 실패 하였습니다.");
-		}
-		return sequence;
 	}
 
 	/**
@@ -153,32 +131,34 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	 * @param param
 	 * @param name
 	 */
-	private void save(String sql, SqlParameterSource param, String name) {
+	private int save(String sql, SqlParameterSource param, String name) {
 		int result = 0;
 		result = namedParameterJdbcTemplate.update(sql, param);
 
 		if (result == 0) {
 			throw new IllegalStateException("게시글 " + name + " 실패 하였습니다.");
 		}
+
+		return result;
 	}
 
 	private RowMapper<ArticleDTO> articleRowMapper() {
 		return (rs, rowNum) -> {
 			ArticleDTO articleDTO = new ArticleDTO();
-			articleDTO.setArticleId(rs.getString("article_id"));
-			articleDTO.setUserId(rs.getString("user_id"));
-			articleDTO.setCommentId(rs.getString("comment_id"));
-			articleDTO.setRegionId(rs.getString("region_id"));
-			articleDTO.setGroupId(rs.getString("group_id"));
+			articleDTO.setArticleId(rs.getInt("article_id"));
+			articleDTO.setUserId(rs.getInt("user_id"));
+			articleDTO.setCommentId(rs.getInt("comment_id"));
+			articleDTO.setRegionId(rs.getInt("region_id"));
+			articleDTO.setGroupId(rs.getInt("group_id"));
 			articleDTO.setSubject(rs.getString("subject"));
 			articleDTO.setContext(rs.getString("context"));
 			articleDTO.setArticleType(validateArticleType(rs.getInt("article_gb")));
 			articleDTO.setPrice(rs.getInt("price"));
 			articleDTO.setActive(rs.getBoolean("active"));
-			articleDTO.setRegisteredDate(rs.getDate("reg_dt"));
-			articleDTO.setRegisteredId(rs.getString("reg_id"));
-			articleDTO.setModifiedDate(rs.getDate("mod_dt"));
-			articleDTO.setModifiedId(rs.getString("mod_id"));
+			articleDTO.setRegisteredDate(rs.getDate("registered_date"));
+			articleDTO.setRegisteredId(rs.getString("registered_id"));
+			articleDTO.setModifiedDate(rs.getDate("modified_date"));
+			articleDTO.setModifiedId(rs.getString("modified_id"));
 			return articleDTO;
 		};
 	}

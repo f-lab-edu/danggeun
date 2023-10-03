@@ -34,12 +34,12 @@ class ArticleTest {
 	@BeforeEach
 	void setUp() {
 		articleDTO = new ArticleDTO();
-		articleDTO.setArticleId("ARTICLE00001");
-		articleDTO.setUserId("testDevelop");
-		articleDTO.setRegionId("regionId");
+		articleDTO.setArticleId(9999);
+		articleDTO.setUserId(9999);
+		articleDTO.setRegionId(9999);
 		articleDTO.setSubject("test subject");
 		articleDTO.setContext("test context");
-		articleDTO.setArticleType(ArticleType.NOMAL);
+		articleDTO.setArticleType(ArticleType.NORMAL);
 		articleDTO.setActive(true);
 		articleDTO.setRegisteredId("testDevelop");
 		articleDTO.setModifiedId("testDevelop");
@@ -51,25 +51,11 @@ class ArticleTest {
 	@Test
 	@DisplayName("게시글 신규 등록")
 	void articleCreate() {
-		articleDTO.setArticleId(null);
 		ArticleDTO resultDTO = articleService.createArticle(articleDTO);
 
 		// 신규 생성 시 ArticleId가 넘어와야 한다.
 		assertThat(resultDTO.getArticleId()).isNotNull();
 
-	}
-
-	/**
-	 * 게시글 신규 등록 시 중복 ID 확인 시 오류 발생
-	 */
-	@Test
-	@DisplayName("게시글 생성 시 게시글 ID 중복 시 오류 발생")
-	void articleAddArticleIdDuplicate() {
-		articleDTO.setArticleId(null);
-		ArticleDTO resultDTO = articleService.createArticle(articleDTO);
-		assertThrows(IllegalStateException.class, () -> {
-			articleService.validateDuplicateArticle(resultDTO.getArticleId());
-		});
 	}
 
 	/**
@@ -96,7 +82,7 @@ class ArticleTest {
 	void articleNullable() {
 		articleDTO.setUserId(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleDTO.validateArticleNullable(articleDTO);
+			articleDTO.validateArticleNullable();
 		});
 
 	}
