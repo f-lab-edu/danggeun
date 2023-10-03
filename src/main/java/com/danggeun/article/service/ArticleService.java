@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.repository.ArticleRepository;
 
@@ -61,8 +62,8 @@ public class ArticleService {
 	 * @param articleId
 	 * @return ArticleDTO
 	 */
-	public ArticleDTO findById(String articleId) {
-		Optional<ArticleDTO> result = articleRepository.findById(articleId);
+	public Article findById(int articleId) {
+		Optional<Article> result = articleRepository.findById(articleId);
 		if (result.isPresent()) {
 			return result.get();
 		} else {
@@ -74,7 +75,7 @@ public class ArticleService {
 	 * 게시글 전체 조회
 	 * @return List<Article>
 	 */
-	public List<ArticleDTO> findByAll() {
+	public List<Article> findByAll() {
 		return articleRepository.findByAll();
 	}
 

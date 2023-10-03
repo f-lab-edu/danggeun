@@ -1,11 +1,13 @@
 package com.danggeun.article.repository.jdbctemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,19 +16,17 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
-import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.ArticleRepository;
 
 @Repository
 public class JdbcTemplateArticleRepository implements ArticleRepository {
 
-	private final JdbcTemplate jdbcTemplate;
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private final SimpleJdbcInsert simpleJdbcInsert;
 
 	public JdbcTemplateArticleRepository(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
 			.withTableName("article")
@@ -83,7 +83,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(article);
 
 		// DB 등록
-		return save(sql.toString(), param, this.getClass().getSimpleName());
+		return namedParameterJdbcTemplate.update(sql.toString(), param);
 
 	}
 
@@ -104,20 +104,25 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(article);
 
 		// DB 등록
-		return save(sql.toString(), param, this.getClass().getSimpleName());
-
+		return namedParameterJdbcTemplate.update(sql.toString(), param);
 	}
 
 	/**
 	 * 게시글 ID 조회
 	 * @param id
-	 * @return Optional<ArticleDTO>
+	 * @return Optional<Article>
 	 */
 	@Override
-	public Optional<ArticleDTO> findById(String id) {
-		List<ArticleDTO> result = jdbcTemplate.query("SELECT * FROM article WHERE article_id = ?", articleRowMapper(),
-			id);
-		return result.stream().findAny();
+	public Optional<Article> findById(int id) {
+		try {
+			Map<String, Object> param = Map.of("articleId", id);
+			Article article = namedParameterJdbcTemplate.queryForObject(
+				"SELECT * FROM article WHERE article_id = :articleId", param,
+				articleRowMapper());
+			return Optional.of(article);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -125,60 +130,13 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	 * @return
 	 */
 	@Override
-	public List<ArticleDTO> findByAll() {
-		return jdbcTemplate.query("SELECT * FROM article", articleRowMapper());
+	public List<Article> findByAll() {
+		return namedParameterJdbcTemplate.query("SELECT * FROM article", articleRowMapper());
 	}
 
-	/**
-	 * CRUD 중복 내용 메소드
-	 * @param sql
-	 * @param param
-	 * @param name
-	 */
-	private int save(String sql, SqlParameterSource param, String name) {
-		int result = 0;
-		result = namedParameterJdbcTemplate.update(sql, param);
-
-		if (result == 0) {
-			throw new IllegalStateException("게시글 " + name + " 실패 하였습니다.");
-		}
-
-		return result;
+	private RowMapper<Article> articleRowMapper() {
+		// snake_case -> camelCase 변환 처리 되어 진행
+		return BeanPropertyRowMapper.newInstance(Article.class);
 	}
 
-	private RowMapper<ArticleDTO> articleRowMapper() {
-		// BeanPropertyRowMapper 사용 테스트 해볼 것...
-		return (rs, rowNum) -> {
-			ArticleDTO articleDTO = new ArticleDTO();
-			articleDTO.setArticleId(rs.getInt("article_id"));
-			articleDTO.setUserId(rs.getInt("user_id"));
-			articleDTO.setCommentId(rs.getInt("comment_id"));
-			articleDTO.setRegionId(rs.getInt("region_id"));
-			articleDTO.setGroupId(rs.getInt("group_id"));
-			articleDTO.setSubject(rs.getString("subject"));
-			articleDTO.setContext(rs.getString("context"));
-			articleDTO.setArticleType(validateArticleType(rs.getInt("article_gb")));
-			articleDTO.setPrice(rs.getInt("price"));
-			articleDTO.setActive(rs.getBoolean("active"));
-			articleDTO.setRegisteredDate(rs.getDate("registered_date"));
-			articleDTO.setRegisteredId(rs.getString("registered_id"));
-			articleDTO.setModifiedDate(rs.getDate("modified_date"));
-			articleDTO.setModifiedId(rs.getString("modified_id"));
-			return articleDTO;
-		};
-	}
-
-	/**
-	 * ArticleType
-	 * @param num
-	 * @return ArticleType
-	 */
-	private ArticleType validateArticleType(int num) {
-		for (ArticleType type : ArticleType.values()) {
-			if (type.getNum() == num) {
-				return type;
-			}
-		}
-		return null;
-	}
 }

@@ -3,6 +3,7 @@ package com.danggeun.article.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
 
 public interface ArticleRepository {
@@ -33,12 +34,12 @@ public interface ArticleRepository {
 	 * @param id
 	 * @return Optional<Article>
 	 */
-	public Optional<ArticleDTO> findById(String id);
+	public Optional<Article> findById(int id);
 
 	/**
 	 * 게시글 전체 조회
 	 * @return List<Article>
 	 */
-	public List<ArticleDTO> findByAll();
+	public List<Article> findByAll();
 
 }

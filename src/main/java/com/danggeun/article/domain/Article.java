@@ -2,15 +2,9 @@ package com.danggeun.article.domain;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
+@Data
 public class Article {
 
 	private Integer articleId;
@@ -21,7 +15,7 @@ public class Article {
 	private String subject;
 	private String context;
 	private int articleType;
-	private int price;
+	private Integer price;
 	private boolean active;
 	private Date registeredDate;
 	private String registeredId;
