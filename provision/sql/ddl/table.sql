@@ -120,7 +120,7 @@ CREATE TABLE article(
     group_id int,
     subject varchar(200) NOT NULL,
     context text NOT NULL,
-    article_gb int NOT NULL,
+    article_type int NOT NULL,
     price int,
     active bool NOT NULL default true,
     registered_date datetime NOT NULL default CURRENT_TIMESTAMP,

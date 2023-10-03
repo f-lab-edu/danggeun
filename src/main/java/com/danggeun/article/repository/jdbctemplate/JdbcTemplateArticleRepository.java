@@ -3,26 +3,37 @@ package com.danggeun.article.repository.jdbctemplate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.ArticleRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Repository
-@RequiredArgsConstructor
 public class JdbcTemplateArticleRepository implements ArticleRepository {
 
 	private final JdbcTemplate jdbcTemplate;
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final SimpleJdbcInsert simpleJdbcInsert;
+
+	public JdbcTemplateArticleRepository(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+			.withTableName("article")
+			.usingGeneratedKeyColumns("article_id")
+			.usingColumns("user_id", "comment_id", "region_id", "group_id", "subject", "context", "article_type",
+				"price", "active", "registered_id", "modified_id");
+	}
 
 	/**
 	 * 게시글 생성
@@ -31,16 +42,9 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	 */
 	@Override
 	public ArticleDTO createArticle(ArticleDTO article) {
-		// insert sql
-		StringBuilder sql = new StringBuilder("INSERT INTO article")
-			.append(
-				"(user_id, comment_id, region_id, group_id, subject, context, article_gb, price, active, registered_date, registered_id, modified_date, modified_id)")
-			.append("VALUES")
-			.append(
-				"(:userId, :commentId, :regionId, :groupId, :subject, :context, :articleType, :price, :active, now(), :registeredId, now(), :modifiedId)");
+		// SimpleJdbcInsert 으로 사용
 
 		// 파라미터 매칭
-		// articleType enum으로 인해서 BeanPropertySqlParameterSource 보다는 Map으로 직접 지정
 		SqlParameterSource param = new MapSqlParameterSource()
 			.addValue("userId", article.getUserId())
 			.addValue("commentId", article.getCommentId())
@@ -54,8 +58,8 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 			.addValue("registeredId", article.getRegisteredId())
 			.addValue("modifiedId", article.getRegisteredId());
 
-		// DB 등록
-		save(sql.toString(), param, this.getClass().getSimpleName());
+		Number key = simpleJdbcInsert.executeAndReturnKey(param);
+		article.setArticleId(key.intValue());
 
 		return article;
 	}
@@ -143,6 +147,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	}
 
 	private RowMapper<ArticleDTO> articleRowMapper() {
+		// BeanPropertyRowMapper 사용 테스트 해볼 것...
 		return (rs, rowNum) -> {
 			ArticleDTO articleDTO = new ArticleDTO();
 			articleDTO.setArticleId(rs.getInt("article_id"));
