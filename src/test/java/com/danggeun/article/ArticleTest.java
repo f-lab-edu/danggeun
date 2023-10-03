@@ -3,6 +3,8 @@ package com.danggeun.article;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.danggeun.article.controller.ArticleController;
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.jdbctemplate.JdbcTemplateArticleRepository;
@@ -21,9 +23,6 @@ import com.danggeun.article.service.ArticleService;
 @SpringBootTest
 @Transactional
 class ArticleTest {
-
-	@Autowired
-	ArticleController articleController;
 
 	@Autowired
 	ArticleService articleService;
@@ -64,17 +63,17 @@ class ArticleTest {
 	}
 
 	/**
-	 * 게시글 수정, 삭제 시 게시글 ID 미 존재 시 오류 발생
+	 * 게시글 수정, 삭제 시 게시글 ID 미 존재 시 Exception 발생
 	 */
 	@Test
 	@DisplayName("게시글 수정, 삭제 시 게시글 ID 미 존재 시 Exception 발생")
 	void articleModifyIllegalArgumentArticleId() {
 		articleDTO.setArticleId(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleDTO.hasId();
+			articleService.modifyArticle(articleDTO);
 		});
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleController.modifyArticle(articleDTO);
+			articleService.deleteArticle(articleDTO);
 		});
 
 	}
@@ -83,9 +82,26 @@ class ArticleTest {
 	 * 게시글 타입별 필수값 체크
 	 */
 	@Test
-	@DisplayName("게시글 수정, 삭제 시 게시글 ID 미 존재 시 IllegalArgumentException 발생")
+	@DisplayName("게시글 타입에 따른 필수값 체크 여부 확인")
 	void articleNullable() {
-		articleDTO.setUserId(null);
+		// 일상 게시글 ArticleType.NORMAl
+		articleDTO.setArticleType(ArticleType.NORMAL);
+		articleDTO.setContext(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			articleDTO.validateArticleNullable();
+		});
+
+		articleDTO.setContext("test context");
+		// 커뮤니티 모집 게시글 ArticleType.GROUP
+		articleDTO.setArticleType(ArticleType.GROUP);
+		articleDTO.setGroupId(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			articleDTO.validateArticleNullable();
+		});
+
+		// 중고거래 게시글 ArticleType.TRADE
+		articleDTO.setArticleType(ArticleType.TRADE);
+		articleDTO.setPrice(null);
 		assertThrows(IllegalArgumentException.class, () -> {
 			articleDTO.validateArticleNullable();
 		});
@@ -93,15 +109,22 @@ class ArticleTest {
 	}
 
 	/**
-	 * 게시글 조회 시 없는 게시물의 경우 오류 발생
+	 * 게시글 조회
 	 */
 	@Test
-	@DisplayName("존재하지 않는 게시물ID 로 게시물 조회 시 오류 발생")
-	void articleNotExist() {
-		String articleId = "ARTICLEnonono";
-		assertThrows(IllegalStateException.class, () -> {
-			articleController.articleById(articleId);
-		});
+	@DisplayName("게시글 ID 조회 및 전체 리스트 조회")
+	void articleSearch() {
+		// 9999 ID 저장
+		articleService.createArticle(articleDTO);
+
+		// articleId 로 조회
+		int articleId = 1;
+		Article findArticle = articleService.findById(articleId);
+		assertThat(findArticle.getArticleId()).isEqualTo(articleId);
+
+		List<Article> articles = articleService.findByAll();
+		assertThat(articles).isNotNull();
+
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.service.ArticleService;
 
@@ -63,8 +64,8 @@ public class ArticleController {
 	 * @return ResponseEntity
 	 */
 	@GetMapping(value = "/{articleId}")
-	public ResponseEntity<ArticleDTO> articleById(@PathVariable(value = "articleId") String articleId) {
-		ArticleDTO result = articleService.findById(articleId);
+	public ResponseEntity<Article> articleById(@PathVariable(value = "articleId") int articleId) {
+		Article result = articleService.findById(articleId);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -73,8 +74,8 @@ public class ArticleController {
 	 * @return ResponseEntity
 	 */
 	@GetMapping
-	public ResponseEntity<List<ArticleDTO>> articleById() {
-		List<ArticleDTO> result = articleService.findByAll();
+	public ResponseEntity<List<Article>> articleById() {
+		List<Article> result = articleService.findByAll();
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 

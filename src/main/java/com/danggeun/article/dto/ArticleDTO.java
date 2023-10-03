@@ -7,17 +7,9 @@ import org.springframework.util.StringUtils;
 
 import com.danggeun.article.enumerate.ArticleType;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Setter
-@Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class ArticleDTO {
 
 	private Integer articleId;
@@ -28,19 +20,25 @@ public class ArticleDTO {
 	private String subject;
 	private String context;
 	private ArticleType articleType;
-	private int price;
+	private Integer price;
 	private boolean active;
 	private Date registeredDate;
 	private String registeredId;
 	private Date modifiedDate;
 	private String modifiedId;
 
+	/**
+	 * 게시글 ID 값 존재 여부 확인
+	 */
 	public void hasId() {
 		if (Objects.isNull(this.getArticleId())) {
 			throw new IllegalArgumentException("게시글 ID가 없습니다.");
 		}
 	}
 
+	/**
+	 * 게시글 필수 값 validation
+	 */
 	public void validateArticleNullable() {
 		if (Objects.isNull(this.getUserId())
 			|| Objects.isNull(this.getRegionId())
@@ -54,12 +52,12 @@ public class ArticleDTO {
 			case NORMAL:
 				break;
 			case GROUP:
-				if (Objects.isNull(this.getGroupId())) {
+				if (Objects.isNull(this.getGroupId()) || Objects.isNull(this.getArticleId())) {
 					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
 				}
 				break;
 			case TRADE:
-				if (Objects.isNull(this.getPrice())) {
+				if (Objects.isNull(this.getPrice()) || Objects.isNull(this.getArticleId())) {
 					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
 				}
 				break;
