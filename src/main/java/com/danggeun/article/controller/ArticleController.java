@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danggeun.article.domain.Article;
-import com.danggeun.article.dto.ArticleDTO;
+import com.danggeun.article.dto.ArticleRequestDto;
+import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,53 +30,61 @@ public class ArticleController {
 
 	/**
 	 * 게시글 생성
-	 * @param articleDTO
-	 * @return ResponseEntity
+	 * @param articleRequestDto
+	 * @return ResponseEntity<ArticleResponseDto>
 	 */
 	@PostMapping
-	public ResponseEntity<ArticleDTO> createArticle(@RequestBody ArticleDTO articleDTO) {
-		return new ResponseEntity<>(articleService.createArticle(articleDTO), HttpStatus.CREATED);
+	public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleRequestDto articleRequestDto) {
+		// 게시글 타입별 필수 값 체크
+		articleRequestDto.validateArticleNullable();
+		return new ResponseEntity<>(articleService.createArticle(articleRequestDto), HttpStatus.CREATED);
 	}
 
 	/**
 	 * 게시글 수정
-	 * @param articleDTO
-	 * @return ResponseEntity
+	 * @param articleRequestDto
+	 * @return ResponseEntity<ArticleResponseDto>
 	 */
 	@PutMapping
-	public ResponseEntity modifyArticle(@RequestBody ArticleDTO articleDTO) {
-		return new ResponseEntity(HttpStatus.OK);
+	public ResponseEntity<ArticleResponseDto> modifyArticle(@RequestBody ArticleRequestDto articleRequestDto) {
+		// 게시글 ID 존재 여부 확인
+		articleRequestDto.hasId();
+		// 게시글 타입별 필수 값 체크
+		articleRequestDto.validateArticleNullable();
+
+		return new ResponseEntity<>(articleService.modifyArticle(articleRequestDto), HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 삭제
-	 * @param articleDTO
+	 * @param articleRequestDto
 	 * @return ResponseEntity
 	 */
 	@DeleteMapping
-	public ResponseEntity deleteArticle(@RequestBody ArticleDTO articleDTO) {
+	public ResponseEntity<ArticleResponseDto> deleteArticle(@RequestBody ArticleRequestDto articleRequestDto) {
+		// 게시글 ID 존재 여부 확인
+		articleRequestDto.hasId();
+		articleService.deleteArticle(articleRequestDto);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 상세 조회
 	 * @param articleId
-	 * @return ResponseEntity
+	 * @return ResponseEntity<ArticleResponseDto>
 	 */
 	@GetMapping(value = "/{articleId}")
-	public ResponseEntity<Article> articleById(@PathVariable(value = "articleId") int articleId) {
-		Article result = articleService.findById(articleId);
-		return new ResponseEntity<>(result, HttpStatus.OK);
+	public ResponseEntity<ArticleResponseDto> findById(@PathVariable(value = "articleId") int articleId) {
+		return new ResponseEntity<>(articleService.findById(articleId), HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 전체 조회
-	 * @return ResponseEntity
+	 * @return ResponseEntity<List < ArticleResponseDto>>
 	 */
 	@GetMapping
-	public ResponseEntity<List<Article>> articleById() {
-		List<Article> result = articleService.findByAll();
-		return new ResponseEntity<>(result, HttpStatus.OK);
+	public ResponseEntity<List<ArticleResponseDto>> findByAll() {
+		return new ResponseEntity<>(articleService.findByAll(), HttpStatus.OK);
 	}
 
 }
