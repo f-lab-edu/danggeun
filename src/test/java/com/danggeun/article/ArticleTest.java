@@ -9,19 +9,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.annotation.SpringIntegrationTest;
 import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleDTO;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.jdbctemplate.JdbcTemplateArticleRepository;
 import com.danggeun.article.service.ArticleService;
 
-@ActiveProfiles("local")
-@SpringBootTest
-@Transactional
+// @ActiveProfiles("local")
+// @SpringBootTest
+// @Transactional
+@SpringIntegrationTest
 class ArticleTest {
 
 	@Autowired
