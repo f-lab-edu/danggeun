@@ -11,17 +11,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.danggeun.annotation.SpringIntegrationTest;
-import com.danggeun.article.domain.Article;
-import com.danggeun.article.dto.ArticleDTO;
+import com.danggeun.article.controller.ArticleController;
+import com.danggeun.article.dto.ArticleRequestDto;
+import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.article.repository.jdbctemplate.JdbcTemplateArticleRepository;
 import com.danggeun.article.service.ArticleService;
 
-// @ActiveProfiles("local")
-// @SpringBootTest
-// @Transactional
 @SpringIntegrationTest
 class ArticleTest {
+
+	@Autowired
+	ArticleController articleController;
 
 	@Autowired
 	ArticleService articleService;
@@ -29,20 +30,20 @@ class ArticleTest {
 	@Autowired
 	JdbcTemplateArticleRepository articleRepository;
 
-	ArticleDTO articleDTO = null;
+	ArticleRequestDto articleRequestDTO = null;
 
 	@BeforeEach
 	void setUp() {
-		articleDTO = new ArticleDTO();
-		articleDTO.setArticleId(9999);
-		articleDTO.setUserId(9999);
-		articleDTO.setRegionId(9999);
-		articleDTO.setSubject("test subject");
-		articleDTO.setContext("test context");
-		articleDTO.setArticleType(ArticleType.NORMAL);
-		articleDTO.setActive(true);
-		articleDTO.setRegisteredId("testDevelop");
-		articleDTO.setModifiedId("testDevelop");
+		articleRequestDTO = new ArticleRequestDto();
+		articleRequestDTO.setArticleId(9999);
+		articleRequestDTO.setUserId(9999);
+		articleRequestDTO.setRegionId(9999);
+		articleRequestDTO.setSubject("test subject");
+		articleRequestDTO.setContext("test context");
+		articleRequestDTO.setArticleType(ArticleType.NORMAL);
+		articleRequestDTO.setActive(true);
+		articleRequestDTO.setRegisteredId("testDevelop");
+		articleRequestDTO.setModifiedId("testDevelop");
 	}
 
 	/**
@@ -53,12 +54,13 @@ class ArticleTest {
 	@Test
 	@DisplayName("게시글 신규 등록")
 	void articleCreate() {
-		ArticleDTO resultDTO = articleService.createArticle(articleDTO);
+		ArticleResponseDto resultDTO = articleService.createArticle(articleRequestDTO);
 		// 신규 생성 시 ArticleId가 넘어 와야 한다.
 		assertThat(resultDTO.getArticleId()).isNotNull();
 
-		resultDTO.setSubject(null);
-		assertThrows(IllegalArgumentException.class, () -> articleService.createArticle(resultDTO));
+		// 필수 값 없는 경우 Exception 발생
+		articleRequestDTO.setSubject(null);
+		assertThrows(IllegalArgumentException.class, () -> articleController.createArticle(articleRequestDTO));
 	}
 
 	/**
@@ -67,12 +69,12 @@ class ArticleTest {
 	@Test
 	@DisplayName("게시글 수정, 삭제 시 게시글 ID 미 존재 시 Exception 발생")
 	void articleModifyIllegalArgumentArticleId() {
-		articleDTO.setArticleId(null);
+		articleRequestDTO.setArticleId(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleService.modifyArticle(articleDTO);
+			articleController.modifyArticle(articleRequestDTO);
 		});
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleService.deleteArticle(articleDTO);
+			articleController.deleteArticle(articleRequestDTO);
 		});
 
 	}
@@ -84,25 +86,25 @@ class ArticleTest {
 	@DisplayName("게시글 타입에 따른 필수값 체크 여부 확인")
 	void articleNullable() {
 		// 일상 게시글 ArticleType.NORMAl
-		articleDTO.setArticleType(ArticleType.NORMAL);
-		articleDTO.setContext(null);
+		articleRequestDTO.setArticleType(ArticleType.NORMAL);
+		articleRequestDTO.setContext(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleDTO.validateArticleNullable();
+			articleRequestDTO.validateArticleNullable();
 		});
 
-		articleDTO.setContext("test context");
+		articleRequestDTO.setContext("test context");
 		// 커뮤니티 모집 게시글 ArticleType.GROUP
-		articleDTO.setArticleType(ArticleType.GROUP);
-		articleDTO.setGroupId(null);
+		articleRequestDTO.setArticleType(ArticleType.GROUP);
+		articleRequestDTO.setGroupId(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleDTO.validateArticleNullable();
+			articleRequestDTO.validateArticleNullable();
 		});
 
 		// 중고거래 게시글 ArticleType.TRADE
-		articleDTO.setArticleType(ArticleType.TRADE);
-		articleDTO.setPrice(null);
+		articleRequestDTO.setArticleType(ArticleType.TRADE);
+		articleRequestDTO.setPrice(null);
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleDTO.validateArticleNullable();
+			articleRequestDTO.validateArticleNullable();
 		});
 
 	}
@@ -114,14 +116,14 @@ class ArticleTest {
 	@DisplayName("게시글 ID 조회 및 전체 리스트 조회")
 	void articleSearch() {
 		// 9999 ID 저장
-		articleService.createArticle(articleDTO);
+		articleService.createArticle(articleRequestDTO);
 
 		// articleId 로 조회
 		int articleId = 1;
-		Article findArticle = articleService.findById(articleId);
+		ArticleResponseDto findArticle = articleService.findById(articleId);
 		assertThat(findArticle.getArticleId()).isEqualTo(articleId);
 
-		List<Article> articles = articleService.findByAll();
+		List<ArticleResponseDto> articles = articleService.findByAll();
 		assertThat(articles).isNotNull();
 
 	}

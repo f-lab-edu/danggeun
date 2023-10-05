@@ -9,8 +9,12 @@ import com.danggeun.article.enumerate.ArticleType;
 
 import lombok.Data;
 
+/**
+ * 게시글 request 전용 Data Transfer Object
+ * DTO 검증 메소드 존재
+ */
 @Data
-public class ArticleDTO {
+public class ArticleRequestDto {
 
 	private Integer articleId;
 	private Integer userId;

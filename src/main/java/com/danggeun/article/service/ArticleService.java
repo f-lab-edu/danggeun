@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.danggeun.article.domain.Article;
-import com.danggeun.article.dto.ArticleDTO;
+import com.danggeun.article.dto.ArticleRequestDto;
+import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.repository.ArticleRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,62 +20,46 @@ public class ArticleService {
 
 	/**
 	 * 게시글 생성
-	 * @param articleDTO
-	 * @return ArticleDTO
+	 * @param articleRequestDto
+	 * @return ArticleResponseDto
 	 */
 	@Transactional
-	public ArticleDTO createArticle(ArticleDTO articleDTO) {
-
-		// 게시글 타입별 필수 값 체크
-		articleDTO.validateArticleNullable();
-
-		return articleRepository.createArticle(articleDTO);
+	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
+		return articleRepository.createArticle(articleRequestDto);
 	}
 
 	/**
 	 * 게시글 수정
-	 * @param articleDTO
+	 * @param articleRequestDto
+	 * @return ArticleResponseDto
 	 */
-	public void modifyArticle(ArticleDTO articleDTO) {
-		// 게시글 ID 존재 여부 확인
-		articleDTO.hasId();
-
-		// 게시글 타입별 필수 값 체크
-		articleDTO.validateArticleNullable();
-
-		articleRepository.modifyArticle(articleDTO);
+	public ArticleResponseDto modifyArticle(ArticleRequestDto articleRequestDto) {
+		return articleRepository.modifyArticle(articleRequestDto);
 	}
 
 	/**
 	 * 게시글 삭제
-	 * @param articleDTO
+	 * @param articleRequestDto
 	 */
-	public void deleteArticle(ArticleDTO articleDTO) {
-		// 게시글 ID 존재 여부 확인
-		articleDTO.hasId();
-
-		articleRepository.deleteArticle(articleDTO);
+	public void deleteArticle(ArticleRequestDto articleRequestDto) {
+		articleRepository.deleteArticle(articleRequestDto);
 	}
 
 	/**
 	 * 게시글 상세 조회
 	 * @param articleId
-	 * @return ArticleDTO
+	 * @return ArticleResponseDto
 	 */
-	public Article findById(int articleId) {
-		Optional<Article> result = articleRepository.findById(articleId);
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			throw new IllegalStateException("존재하지 않는 게시물 입니다.");
-		}
+	public ArticleResponseDto findById(int articleId) {
+		Optional<ArticleResponseDto> result = articleRepository.findById(articleId);
+		return result.orElseThrow(() -> new IllegalStateException("게시글이 존재 하지 않습니다."));
 	}
 
 	/**
 	 * 게시글 전체 조회
-	 * @return List<Article>
+	 * @return List<ArticleResponseDto>
 	 */
-	public List<Article> findByAll() {
+	public List<ArticleResponseDto> findByAll() {
 		return articleRepository.findByAll();
 	}
 
