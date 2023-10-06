@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.danggeun.annotation.SpringIntegrationTest;
 import com.danggeun.article.controller.ArticleController;
@@ -123,9 +125,12 @@ class ArticleTest {
 		ArticleResponseDto findArticle = articleService.findById(articleId);
 		assertThat(findArticle.getArticleId()).isEqualTo(articleId);
 
-		List<ArticleResponseDto> articles = articleService.findByAll();
-		assertThat(articles).isNotNull();
+		// 페이징 처리 객체 생성
+		Pageable pageable = PageRequest.of(0, 3);
 
+		List<ArticleResponseDto> articles = articleService.findByAll(pageable);
+		assertThat(articles).isNotNull();
+		assertThat(articles.size()).isEqualTo(3);
 	}
 
 }

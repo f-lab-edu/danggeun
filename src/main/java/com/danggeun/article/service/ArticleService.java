@@ -3,6 +3,7 @@ package com.danggeun.article.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,10 +58,11 @@ public class ArticleService {
 
 	/**
 	 * 게시글 전체 조회
+	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
-	public List<ArticleResponseDto> findByAll() {
-		return articleRepository.findByAll();
+	public List<ArticleResponseDto> findByAll(Pageable pageable) {
+		return articleRepository.findByAll(pageable);
 	}
 
 }
