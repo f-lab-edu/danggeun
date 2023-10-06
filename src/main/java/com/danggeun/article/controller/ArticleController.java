@@ -2,6 +2,9 @@ package com.danggeun.article.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,11 +83,13 @@ public class ArticleController {
 
 	/**
 	 * 게시글 전체 조회
+	 * @param pageable
 	 * @return ResponseEntity<List < ArticleResponseDto>>
 	 */
 	@GetMapping
-	public ResponseEntity<List<ArticleResponseDto>> findByAll() {
-		return new ResponseEntity<>(articleService.findByAll(), HttpStatus.OK);
+	public ResponseEntity<List<ArticleResponseDto>> findByAll(
+		@PageableDefault(size = 3, sort = "article_id", direction = Sort.Direction.DESC) Pageable pageable) {
+		return new ResponseEntity<>(articleService.findByAll(pageable), HttpStatus.OK);
 	}
 
 }

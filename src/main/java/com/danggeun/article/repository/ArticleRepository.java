@@ -3,6 +3,8 @@ package com.danggeun.article.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 
@@ -38,8 +40,9 @@ public interface ArticleRepository {
 
 	/**
 	 * 게시글 전체 조회
+	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
-	public List<ArticleResponseDto> findByAll();
+	public List<ArticleResponseDto> findByAll(Pageable pageable);
 
 }

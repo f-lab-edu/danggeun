@@ -50,4 +50,4 @@ Content-Type: application/json
 GET {{article-api}}/1
 
 ### 5. 게시글 전체 조회
-GET {{article-api}}
+GET {{article-api}}?page=3

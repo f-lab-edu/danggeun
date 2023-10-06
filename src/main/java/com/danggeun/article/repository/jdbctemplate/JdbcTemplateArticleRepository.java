@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -132,11 +134,25 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 
 	/**
 	 * 게시글 전제 조회
+	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
 	@Override
-	public List<ArticleResponseDto> findByAll() {
-		return namedParameterJdbcTemplate.query("SELECT * FROM article", articleRowMapper());
+	public List<ArticleResponseDto> findByAll(Pageable pageable) {
+		
+		Sort.Order order =
+			!pageable.getSort().isEmpty() ? pageable.getSort().toList().get(0) : Sort.Order.by("article_id");
+		int pageSize = pageable.getPageSize();
+		long offSet = pageable.getOffset();
+		SqlParameterSource param = new MapSqlParameterSource()
+			.addValue("order", order.getProperty())
+			.addValue("orderDirection", order.getDirection().name())
+			.addValue("pageSize", pageSize)
+			.addValue("offSet", offSet);
+
+		return namedParameterJdbcTemplate.query(
+			"SELECT * FROM article ORDER BY :order :orderDirection LIMIT :pageSize OFFSET :offSet",
+			param, articleRowMapper());
 	}
 
 	/**
