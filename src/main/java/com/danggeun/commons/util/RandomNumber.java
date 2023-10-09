@@ -1,16 +1,17 @@
 package com.danggeun.commons.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.stereotype.Service;
 
 import lombok.Getter;
 
 @Getter
-@Service
-public class CertificationNumber {
+public class RandomNumber {
 	private String number;
 
-	public CertificationNumber() {
+	/**
+	 * 랜덤 5자리 이메일 인증번호 생성
+	 */
+	public RandomNumber() {
 		this.number = RandomStringUtils.randomNumeric(5);
 	}
 

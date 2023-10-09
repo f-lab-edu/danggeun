@@ -10,6 +10,7 @@ import com.danggeun.mail.exception.EmailDuplicatedException;
 import com.danggeun.mail.exception.EmailFormatException;
 import com.danggeun.mail.exception.EmailInvalidRequestException;
 import com.danggeun.mail.exception.NoCertificationException;
+import com.danggeun.region.exception.AddressSearchKakaoApiException;
 import com.danggeun.user.exception.NicknameDuplicatedException;
 import com.danggeun.user.exception.UserInvalidRequestException;
 import com.danggeun.user.exception.UserPasswordFormatException;
@@ -44,7 +45,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(UserInvalidRequestException.class)
 	public String userInvalidRequestExceptionHandler(UserInvalidRequestException e) {
-		log.error("회원 정보 중 null 값이 존재합니다.", e.fillInStackTrace());
+		log.error("사용자 정보가 누락됐습니다.", e.fillInStackTrace());
 		return e.getMessage();
 	}
 
@@ -58,7 +59,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(EmailInvalidRequestException.class)
 	public String emailInvalidRequestExceptionHandler(EmailInvalidRequestException e) {
-		log.error("이메일 값이 null입니다.", e.fillInStackTrace());
+		log.error("이메일 값이 누락됐습니다.", e.fillInStackTrace());
 		return e.getMessage();
 	}
 
@@ -77,10 +78,17 @@ public class ExceptionAdvice {
 		return e.getMessage();
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.PRECONDITION_FAILED)
 	@ExceptionHandler(NoCertificationException.class)
 	public String noCertificationExceptionHandler(NoCertificationException e) {
 		log.error("이메일 인증하지 않았습니다.", e.fillInStackTrace());
+		return e.getMessage();
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(AddressSearchKakaoApiException.class)
+	public String addressSearchKakaoApiException(AddressSearchKakaoApiException e) {
+		log.error("주소 검색 카카오 API 실패했습니다. {}", e.getMessage());
 		return e.getMessage();
 	}
 

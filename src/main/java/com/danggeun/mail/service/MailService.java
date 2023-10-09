@@ -6,8 +6,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.danggeun.commons.util.CertificationNumber;
 import com.danggeun.commons.util.EmailRedisService;
+import com.danggeun.commons.util.RandomNumber;
 import com.danggeun.mail.dto.MailDTO;
 
 import jakarta.mail.MessagingException;
@@ -21,25 +21,29 @@ public class MailService {
 
 	private final JavaMailSender javaMailSender;
 	private final EmailRedisService emailRedisService;
-	private final CertificationNumber certificationNumber;
 
 	/**
 	 * 이메일 인증번호 발송
 	 * @param mailDTO
 	 * @return MailDTO
 	 */
-	public MailDTO send(MailDTO mailDTO) throws MessagingException, UnsupportedEncodingException {
-
+	public MailDTO send(MailDTO mailDTO) {
 		// 이메일 null 값, 형식 체크
 		mailDTO.validate();
 
 		if (emailRedisService.exist(mailDTO.getTo())) {
 			emailRedisService.delete(mailDTO.getTo());
 		}
-		createCertificationNumber(mailDTO);
-		MimeMessage message = createMailForm(mailDTO);
-		emailRedisService.set(mailDTO.getTo(), mailDTO.getCertificationNumber(), DURATION);
-		javaMailSender.send(message);
+
+		try {
+			createCertificationNumber(mailDTO);
+			MimeMessage message = createMailForm(mailDTO);
+			emailRedisService.set(mailDTO.getTo(), mailDTO.getCertificationNumber(), DURATION);
+			javaMailSender.send(message);
+		} catch (MessagingException | UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+
 		return mailDTO;
 	}
 
@@ -48,6 +52,7 @@ public class MailService {
 	 * @param mailDTO
 	 */
 	public void createCertificationNumber(MailDTO mailDTO) {
+		RandomNumber certificationNumber = new RandomNumber();
 		// 이메일 인증번호 5자리 생성
 		mailDTO.setCertificationNumber(certificationNumber.getNumber());
 	}

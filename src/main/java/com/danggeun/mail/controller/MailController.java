@@ -1,7 +1,5 @@
 package com.danggeun.mail.controller;
 
-import java.io.UnsupportedEncodingException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +11,12 @@ import com.danggeun.mail.dto.MailDTO;
 import com.danggeun.mail.exception.CertificationNumberMismatchException;
 import com.danggeun.mail.service.MailService;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mail")
 public class MailController {
-	public static final String KEY = "loginUser";
 	private final MailService mailService;
 
 	/**
@@ -29,9 +25,7 @@ public class MailController {
 	 * @return MailDTO
 	 */
 	@PostMapping("/send")
-	public ResponseEntity<MailDTO> mailSend(@RequestBody MailDTO mailDTO) throws
-		MessagingException,
-		UnsupportedEncodingException {
+	public ResponseEntity<MailDTO> mailSend(@RequestBody MailDTO mailDTO) {
 		return new ResponseEntity<>(mailService.send(mailDTO), HttpStatus.OK);
 	}
 
