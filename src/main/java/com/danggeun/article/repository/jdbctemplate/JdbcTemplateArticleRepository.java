@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Repository;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.dto.ArticleResponseMapperImpl;
+import com.danggeun.article.exception.ArticleIncorrectResultSizeException;
+import com.danggeun.article.exception.ArticleNotFoundException;
 import com.danggeun.article.repository.ArticleRepository;
 
 @Repository
@@ -128,7 +131,11 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 				"SELECT * FROM article WHERE article_id = :articleId", param, articleRowMapper());
 			return Optional.ofNullable(articleResponseDto);
 		} catch (EmptyResultDataAccessException e) {
-			return Optional.empty();
+			// queryForObject 조회 결과 null 의 경우 예외 발생
+			throw new ArticleNotFoundException("존재 하지 않는 게시물 입니다.", e);
+		} catch (IncorrectResultSizeDataAccessException e) {
+			// queryForObject 조회 결과 1 건 이상인 경우 예외 발생
+			throw new ArticleIncorrectResultSizeException("조회 결과가 단건이 아닙니다.", e);
 		}
 	}
 
@@ -139,7 +146,7 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 	 */
 	@Override
 	public List<ArticleResponseDto> findByAll(Pageable pageable) {
-		
+
 		Sort.Order order =
 			!pageable.getSort().isEmpty() ? pageable.getSort().toList().get(0) : Sort.Order.by("article_id");
 		int pageSize = pageable.getPageSize();
