@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
+import com.danggeun.article.exception.ArticleNotFoundException;
 import com.danggeun.article.repository.ArticleRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class ArticleService {
 	 */
 	public ArticleResponseDto findById(int articleId) {
 		Optional<ArticleResponseDto> result = articleRepository.findById(articleId);
-		return result.orElseThrow(() -> new IllegalStateException("게시글이 존재 하지 않습니다."));
+		return result.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
 	}
 
 	/**

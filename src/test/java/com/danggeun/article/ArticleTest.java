@@ -17,6 +17,7 @@ import com.danggeun.article.controller.ArticleController;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.enumerate.ArticleType;
+import com.danggeun.article.exception.ArticleNotFoundException;
 import com.danggeun.article.repository.jdbctemplate.JdbcTemplateArticleRepository;
 import com.danggeun.article.service.ArticleService;
 
@@ -36,16 +37,8 @@ class ArticleTest {
 
 	@BeforeEach
 	void setUp() {
-		articleRequestDTO = new ArticleRequestDto();
-		articleRequestDTO.setArticleId(9999);
-		articleRequestDTO.setUserId(9999);
-		articleRequestDTO.setRegionId(9999);
-		articleRequestDTO.setSubject("test subject");
-		articleRequestDTO.setContext("test context");
-		articleRequestDTO.setArticleType(ArticleType.NORMAL);
-		articleRequestDTO.setActive(true);
-		articleRequestDTO.setRegisteredId("testDevelop");
-		articleRequestDTO.setModifiedId("testDevelop");
+		articleRequestDTO = new ArticleRequestDto(9999, 9999, null, 9999, null, "test subject", "test context",
+			ArticleType.NORMAL, null, true, null, "testDevelop", null, "testDevelop");
 	}
 
 	/**
@@ -131,6 +124,14 @@ class ArticleTest {
 		List<ArticleResponseDto> articles = articleService.findByAll(pageable);
 		assertThat(articles).isNotNull();
 		assertThat(articles.size()).isEqualTo(3);
+	}
+
+	@Test
+	@DisplayName("게시글 조회 시 존재 하지 않는 경우 예외 발생")
+	void articleNotFound() {
+		assertThrows(ArticleNotFoundException.class, () -> {
+			articleService.findById(99999);
+		});
 	}
 
 }

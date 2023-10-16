@@ -7,13 +7,17 @@ import org.springframework.util.StringUtils;
 
 import com.danggeun.article.enumerate.ArticleType;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 게시글 request 전용 Data Transfer Object
  * DTO 검증 메소드 존재
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ArticleRequestDto {
 
 	private Integer articleId;
