@@ -7,6 +7,6 @@ import org.mapstruct.factory.Mappers;
 public interface ArticleResponseMapper {
 	ArticleResponseMapper INSTANCE = Mappers.getMapper(ArticleResponseMapper.class);
 
-	// ArticleRequsetDTO -> ArticleResponseDTO 매핑
+	// ArticleRequestDTO -> ArticleResponseDTO 매핑
 	ArticleResponseDto toArticleResponseDto(ArticleRequestDto articleRequestDto);
 }
