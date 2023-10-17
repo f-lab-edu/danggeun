@@ -134,8 +134,7 @@ drop table if exists comment CASCADE;
 CREATE TABLE comment(
     comment_id int NOT NULL AUTO_INCREMENT primary key,
     article_id int NOT NULL,
-    user_id int NOT NULL,
-    comment text NOT NULL,
+    context text NOT NULL,
     active bool NOT NULL default true,
     registered_date datetime NOT NULL default CURRENT_TIMESTAMP,
     registered_id varchar(20) NOT NULL,
@@ -218,3 +217,10 @@ CREATE TABLE sequences(
     name varchar(32) DEFAULT NULL,
     currval bigint unsigned DEFAULT NULL,
 );
+
+commit;
+
+
+select *
+from article
+order by article_id desc

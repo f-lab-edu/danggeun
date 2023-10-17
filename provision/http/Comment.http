@@ -1,0 +1,60 @@
+### 1. 댓글 등록
+POST {{comment-api}}
+Content-Type: application/json
+
+{
+  "articleDto": {
+    "articleId": 1,
+    "active": true,
+    "registeredDate": null,
+    "registeredId": "develop_test",
+    "modifiedDate": null,
+    "modifiedId": "develop_test"
+  },
+  "commentId": null,
+  "context": "context test",
+  "active": true,
+  "registeredDate": null,
+  "registeredId": "develop_test",
+  "modifiedDate": null,
+  "modifiedId": "develop_test"
+}
+
+### 2. 댓글 수정
+PUT {{comment-api}}
+Content-Type: application/json
+
+{
+  "articleDto": {
+    "articleId": 1,
+    "active": true,
+    "registeredDate": null,
+    "registeredId": "develop_test",
+    "modifiedDate": null,
+    "modifiedId": "develop_test"
+  },
+  "commentId": 1,
+  "context": "context test modify",
+  "active": true,
+  "modifiedDate": null,
+  "modifiedId": "develop_test"
+}
+
+### 3. 댓글 삭제
+DELETE {{comment-api}}
+Content-Type: application/json
+
+{
+  "articleDto": {
+    "articleId": 1,
+    "active": true
+  },
+  "commentId": 1,
+  "context": "context test delete",
+  "active": true,
+  "modifiedDate": null,
+  "modifiedId": "develop_test"
+}
+
+### 4. 댓글 조회
+GET {{comment-api}}/1?page=0
