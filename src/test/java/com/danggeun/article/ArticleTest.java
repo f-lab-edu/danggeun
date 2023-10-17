@@ -117,13 +117,14 @@ class ArticleTest {
 		int articleId = 1;
 		ArticleResponseDto findArticle = articleService.findById(articleId);
 		assertThat(findArticle.getArticleId()).isEqualTo(articleId);
-
+		
 		// 페이징 처리 객체 생성
 		Pageable pageable = PageRequest.of(0, 3);
 
 		List<ArticleResponseDto> articles = articleService.findByAll(pageable);
 		assertThat(articles).isNotNull();
 		assertThat(articles.size()).isEqualTo(3);
+
 	}
 
 	@Test
