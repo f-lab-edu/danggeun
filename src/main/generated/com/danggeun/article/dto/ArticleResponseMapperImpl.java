@@ -4,7 +4,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-10-16T19:41:40+0900",
+    date = "2023-10-16T20:24:51+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.8.1 (Amazon.com Inc.)"
 )
 public class ArticleResponseMapperImpl implements ArticleResponseMapper {
@@ -17,7 +17,6 @@ public class ArticleResponseMapperImpl implements ArticleResponseMapper {
 
         ArticleResponseDto articleResponseDto = new ArticleResponseDto();
 
-        articleResponseDto.setActive( articleRequestDto.isActive() );
         articleResponseDto.setArticleId( articleRequestDto.getArticleId() );
         articleResponseDto.setUserId( articleRequestDto.getUserId() );
         articleResponseDto.setCommentId( articleRequestDto.getCommentId() );
@@ -27,6 +26,7 @@ public class ArticleResponseMapperImpl implements ArticleResponseMapper {
         articleResponseDto.setContext( articleRequestDto.getContext() );
         articleResponseDto.setArticleType( articleRequestDto.getArticleType() );
         articleResponseDto.setPrice( articleRequestDto.getPrice() );
+        articleResponseDto.setActive( articleRequestDto.isActive() );
         articleResponseDto.setRegisteredDate( articleRequestDto.getRegisteredDate() );
         articleResponseDto.setRegisteredId( articleRequestDto.getRegisteredId() );
         articleResponseDto.setModifiedDate( articleRequestDto.getModifiedDate() );
