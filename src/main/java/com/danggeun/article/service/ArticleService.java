@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
@@ -25,7 +24,6 @@ public class ArticleService {
 	 * @param articleRequestDto
 	 * @return ArticleResponseDto
 	 */
-	@Transactional
 	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
 		return articleRepository.createArticle(articleRequestDto);
 	}

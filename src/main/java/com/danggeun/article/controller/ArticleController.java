@@ -68,7 +68,7 @@ public class ArticleController {
 		// 게시글 ID 존재 여부 확인
 		articleRequestDto.hasId();
 		articleService.deleteArticle(articleRequestDto);
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
