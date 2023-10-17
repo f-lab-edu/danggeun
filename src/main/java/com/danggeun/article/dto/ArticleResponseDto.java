@@ -1,8 +1,10 @@
 package com.danggeun.article.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.danggeun.article.enumerate.ArticleType;
+import com.danggeun.comment.dto.CommentResponseDto;
 
 import lombok.Data;
 
@@ -26,5 +28,7 @@ public class ArticleResponseDto {
 	private String registeredId;
 	private Date modifiedDate;
 	private String modifiedId;
+
+	private List<CommentResponseDto> comments;
 
 }

@@ -2,6 +2,7 @@ package com.danggeun.article.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.service.ArticleService;
+import com.danggeun.comment.dto.CommentResponseDto;
+import com.danggeun.comment.service.CommentService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final CommentService commentService;
 
 	/**
 	 * 게시글 생성
@@ -78,7 +82,13 @@ public class ArticleController {
 	 */
 	@GetMapping(value = "/{articleId}")
 	public ResponseEntity<ArticleResponseDto> findById(@PathVariable(value = "articleId") int articleId) {
-		return new ResponseEntity<>(articleService.findById(articleId), HttpStatus.OK);
+		ArticleResponseDto result = articleService.findById(articleId);
+
+		// 게시글 댓글 조회
+		List<CommentResponseDto> commentList = commentService.findAll(PageRequest.of(0, 3), articleId);
+		result.setComments(commentList);
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	/**
