@@ -58,7 +58,7 @@ public class CommentController {
 
 	// 댓글 삭제
 	@DeleteMapping
-	public ResponseEntity<CommentResponseDto> deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
+	public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인 + 게시글 ID 존재 확인 여부
 		commentRequestDto.validId();
 
