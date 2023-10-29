@@ -38,7 +38,7 @@ public class ArticleRequestDto {
 	/**
 	 * 게시글 ID 값 존재 여부 확인
 	 */
-	public void hasId() {
+	public void validId() {
 		if (Objects.isNull(this.getArticleId())) {
 			throw new IllegalArgumentException("게시글 ID가 없습니다.");
 		}
