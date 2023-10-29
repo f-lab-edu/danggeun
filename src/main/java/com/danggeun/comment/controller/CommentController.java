@@ -36,9 +36,6 @@ public class CommentController {
 	// 댓글 등록
 	@PostMapping
 	public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
-		// 게시글 정보 확인
-		commentRequestDto.articleExists();
-
 		return new ResponseEntity<>(commentService.createComment(commentRequestDto), HttpStatus.CREATED);
 
 	}
@@ -46,11 +43,8 @@ public class CommentController {
 	// 댓글 수정
 	@PutMapping
 	public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentRequestDto commentRequestDto) {
-		// 댓글 ID 존재 여부 확인 + 게시글 ID 존재 확인 여부
+		// 댓글 ID 존재 여부 확인
 		commentRequestDto.validId();
-
-		// 실제 게시글 조회 확인
-		articleService.findById(commentRequestDto.getArticleDto().getArticleId());
 
 		return new ResponseEntity<>(commentService.modifyComment(commentRequestDto), HttpStatus.OK);
 
@@ -59,11 +53,8 @@ public class CommentController {
 	// 댓글 삭제
 	@DeleteMapping
 	public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
-		// 댓글 ID 존재 여부 확인 + 게시글 ID 존재 확인 여부
+		// 댓글 ID 존재 여부 확인
 		commentRequestDto.validId();
-
-		// 실제 게시글 조회 확인
-		articleService.findById(commentRequestDto.getArticleDto().getArticleId());
 
 		// 댓글 삭제
 		commentService.deleteComment(commentRequestDto);
