@@ -110,7 +110,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
 			.addValue("offSet", offSet);
 
 		return namedParameterJdbcTemplate.query(
-			"SELECT * FROM comment WHERE article_id = :articleId ORDER BY :order :orderDirection LIMIT :pageSize OFFSET :offSet",
+			"SELECT c.* FROM comment WHERE article_id = :articleId ORDER BY :order :orderDirection LIMIT :pageSize OFFSET :offSet",
 			param, commentRowMapper());
 	}
 
