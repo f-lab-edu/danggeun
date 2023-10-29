@@ -1,7 +1,6 @@
 package com.danggeun.article.dto;
 
 import java.util.Date;
-import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 
@@ -39,7 +38,7 @@ public class ArticleRequestDto {
 	 * 게시글 ID 값 존재 여부 확인
 	 */
 	public void validId() {
-		if (Objects.isNull(this.getArticleId())) {
+		if (this.getArticleId() == null) {
 			throw new IllegalArgumentException("게시글 ID가 없습니다.");
 		}
 	}
@@ -48,8 +47,8 @@ public class ArticleRequestDto {
 	 * 게시글 필수 값 validation
 	 */
 	public void validateArticleNullable() {
-		if (Objects.isNull(this.getUserId())
-			|| Objects.isNull(this.getRegionId())
+		if (this.getUserId() == null
+			|| this.getRegionId() == null
 			|| !StringUtils.hasText(this.getSubject())
 			|| !StringUtils.hasText(this.getContext())
 		) {
@@ -60,12 +59,12 @@ public class ArticleRequestDto {
 			case NORMAL:
 				break;
 			case GROUP:
-				if (Objects.isNull(this.getGroupId()) || Objects.isNull(this.getArticleId())) {
+				if (this.getGroupId() == null || this.getArticleId() == null) {
 					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
 				}
 				break;
 			case TRADE:
-				if (Objects.isNull(this.getPrice()) || Objects.isNull(this.getArticleId())) {
+				if (this.getPrice() == null || this.getArticleId() == null) {
 					throw new IllegalArgumentException("게시글 필수값 NULL 입니다.");
 				}
 				break;
