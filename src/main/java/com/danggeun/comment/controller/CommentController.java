@@ -47,7 +47,7 @@ public class CommentController {
 	@PutMapping
 	public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인 + 게시글 ID 존재 확인 여부
-		commentRequestDto.hasId();
+		commentRequestDto.validId();
 
 		// 실제 게시글 조회 확인
 		articleService.findById(commentRequestDto.getArticleDto().getArticleId());
@@ -60,7 +60,7 @@ public class CommentController {
 	@DeleteMapping
 	public ResponseEntity<CommentResponseDto> deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인 + 게시글 ID 존재 확인 여부
-		commentRequestDto.hasId();
+		commentRequestDto.validId();
 
 		// 실제 게시글 조회 확인
 		articleService.findById(commentRequestDto.getArticleDto().getArticleId());
