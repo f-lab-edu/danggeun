@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danggeun.user.dto.UserDTO;
+import com.danggeun.user.service.LoginService;
 import com.danggeun.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
