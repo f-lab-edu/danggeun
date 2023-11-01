@@ -55,7 +55,7 @@ public class ArticleController {
 	@PutMapping
 	public ResponseEntity<ArticleResponseDto> modifyArticle(@RequestBody ArticleRequestDto articleRequestDto) {
 		// 게시글 ID 존재 여부 확인
-		articleRequestDto.validId();
+		articleRequestDto.validateId();
 		// 게시글 타입별 필수 값 체크
 		articleRequestDto.validateArticleNullable();
 
@@ -70,7 +70,7 @@ public class ArticleController {
 	@DeleteMapping
 	public ResponseEntity<ArticleResponseDto> deleteArticle(@RequestBody ArticleRequestDto articleRequestDto) {
 		// 게시글 ID 존재 여부 확인
-		articleRequestDto.validId();
+		articleRequestDto.validateId();
 		articleService.deleteArticle(articleRequestDto);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

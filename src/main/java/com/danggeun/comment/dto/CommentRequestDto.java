@@ -31,7 +31,7 @@ public class CommentRequestDto {
 	/**
 	 * 댓글 ID 값 존재 여부 확인
 	 */
-	public void validId() {
+	public void validateId() {
 		if (Objects.isNull(this.getCommentId())) {
 			throw new IllegalArgumentException("댓글 ID가 없습니다.");
 		}

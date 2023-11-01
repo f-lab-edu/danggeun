@@ -44,7 +44,7 @@ public class CommentController {
 	@PutMapping
 	public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인
-		commentRequestDto.validId();
+		commentRequestDto.validateId();
 
 		return new ResponseEntity<>(commentService.modifyComment(commentRequestDto), HttpStatus.OK);
 
@@ -54,7 +54,7 @@ public class CommentController {
 	@DeleteMapping
 	public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인
-		commentRequestDto.validId();
+		commentRequestDto.validateId();
 
 		// 댓글 삭제
 		commentService.deleteComment(commentRequestDto);
