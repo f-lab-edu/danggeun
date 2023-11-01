@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danggeun.article.service.ArticleService;
 import com.danggeun.comment.dto.CommentRequestDto;
 import com.danggeun.comment.dto.CommentResponseDto;
 import com.danggeun.comment.service.CommentService;
@@ -31,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CommentController {
 
 	private final CommentService commentService;
-	private final ArticleService articleService;
 
 	// 댓글 등록
 	@PostMapping

@@ -25,7 +25,7 @@ drop table if exists wish CASCADE;
 CREATE TABLE wish(
     seq int NOT NULL AUTO_INCREMENT primary key,
     user_id int NOT NULL,
-    artice_id int NOT NULL,
+    article_id int NOT NULL,
     active bool NOT NULL default true,
     registered_date datetime NOT NULL default CURRENT_TIMESTAMP,
     registered_id varchar(20) NOT NULL,
