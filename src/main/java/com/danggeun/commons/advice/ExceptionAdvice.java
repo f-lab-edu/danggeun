@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.danggeun.mail.exception.CertificationNumberMismatchException;
+import com.danggeun.mail.exception.EmailCertificationNumberSendException;
 import com.danggeun.mail.exception.EmailDuplicatedException;
 import com.danggeun.mail.exception.EmailFormatException;
 import com.danggeun.mail.exception.EmailInvalidRequestException;
 import com.danggeun.mail.exception.NoCertificationException;
 import com.danggeun.region.exception.AddressSearchKakaoApiException;
 import com.danggeun.user.exception.NicknameDuplicatedException;
+import com.danggeun.user.exception.UserIncorrectResultSizeException;
 import com.danggeun.user.exception.UserInvalidRequestException;
 import com.danggeun.user.exception.UserPasswordFormatException;
 
@@ -52,7 +54,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(UserPasswordFormatException.class)
 	public String userPasswordFormatExceptionHandler(UserPasswordFormatException e) {
-		log.error("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상 16자 이하의 비밀번호를 입력해야 합니다.");
+		log.error("최소 한개 이상의 대소문자와 숫자, 특수문자를 포함한 8자 이상 16자 이하의 비밀번호를 입력해야 합니다.", e.fillInStackTrace());
 		return e.getMessage();
 	}
 
@@ -88,8 +90,21 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(AddressSearchKakaoApiException.class)
 	public String addressSearchKakaoApiException(AddressSearchKakaoApiException e) {
-		log.error("주소 검색 카카오 API 실패했습니다. {}", e.getMessage());
+		log.error("주소 검색 카카오 API 실패했습니다.", e.fillInStackTrace());
 		return e.getMessage();
 	}
 
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(UserIncorrectResultSizeException.class)
+	public String userIncorrectResultSizeException(UserIncorrectResultSizeException e) {
+		log.error("조회 결과가 2건 이상입니다.", e.fillInStackTrace());
+		return e.getMessage();
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(EmailCertificationNumberSendException.class)
+	public String emailCertificationNumberSendException(EmailDuplicatedException e) {
+		log.error("이메일 인증번호 발송 오류가 발생했습니다.", e.fillInStackTrace());
+		return e.getMessage();
+	}
 }
