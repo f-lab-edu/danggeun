@@ -1,23 +1,41 @@
 package com.danggeun.user.repository;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.danggeun.user.dto.UserDTO;
+import com.danggeun.user.exception.UserIncorrectResultSizeException;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 @Primary
 @Repository
+//@RequiredArgsConstructor
 public class JdbcTemplateUserRepository implements UserRepository {
 
-	private final JdbcTemplate jdbcTemplate;
+	//private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final SimpleJdbcInsert simpleJdbcInsert;
+
+	public JdbcTemplateUserRepository(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+			.withTableName("user")
+			.usingGeneratedKeyColumns("user_id")
+			.usingColumns("user_password", "user_name", "nickname", "email", "phone_number", "login_type", "active",
+				"created_id", "modified_id");
+	}
 
 	/**
 	 * 사용자 생성
@@ -26,16 +44,18 @@ public class JdbcTemplateUserRepository implements UserRepository {
 	 */
 	@Override
 	public UserDTO save(UserDTO userDTO) {
-		userDTO.setUserLoginType("D");
-		StringBuilder query = new StringBuilder();
-		query.append("insert into ")
-			.append("user(user_password, user_name, nickname, email, phone_number, login_type, "
-				+ "active, created_date, created_id, modified_date, modified_id) ")
-			.append("values (?, ?, ?, ?, ?, ?, ?, now(), ?, "
-				+ "now(), ?)");
-		jdbcTemplate.update(query.toString(), userDTO.getUserPassword(), userDTO.getUserName()
-			, userDTO.getUserNickname(), userDTO.getUserEmail(), userDTO.getUserPhoneNumber()
-			, userDTO.getUserLoginType(), userDTO.isUserActive(), userDTO.getCreateId(), userDTO.getModifiedId());
+		SqlParameterSource param = new MapSqlParameterSource()
+			.addValue("user_password", userDTO.getUserPassword())
+			.addValue("user_name", userDTO.getUserName())
+			.addValue("nickname", userDTO.getUserNickname())
+			.addValue("email", userDTO.getUserEmail())
+			.addValue("phone_number", userDTO.getUserPhoneNumber())
+			.addValue("login_type", userDTO.getUserLoginType().getValue())
+			.addValue("active", userDTO.isUserActive())
+			.addValue("created_id", userDTO.getCreateId())
+			.addValue("modified_id", userDTO.getModifiedId());
+		Number key = simpleJdbcInsert.executeAndReturnKey(param);
+		userDTO.setUserId(key.longValue());
 		return userDTO;
 	}
 
@@ -46,12 +66,18 @@ public class JdbcTemplateUserRepository implements UserRepository {
 	 */
 	@Override
 	public Optional<UserDTO> findByEmail(String email) {
+		Map<String, Object> param = Map.of("email", email);
 		StringBuilder query = new StringBuilder();
-		query.append("select * from user where email = ?");
+		query.append("select * from user where email = :email");
 
-		List<UserDTO> result = jdbcTemplate.query(query.toString(), itemRowMapper(), email);
-
-		return result.stream().findFirst();
+		try {
+			UserDTO result = namedParameterJdbcTemplate.queryForObject(query.toString(), param, UserRowMapper());
+			return Optional.ofNullable(result);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		} catch (IncorrectResultSizeDataAccessException e) {
+			throw new UserIncorrectResultSizeException("조회한 결과가 2건 이상입니다.");
+		}
 	}
 
 	/**
@@ -62,33 +88,20 @@ public class JdbcTemplateUserRepository implements UserRepository {
 	@Override
 	public Optional<UserDTO> findByNickname(String nickname) {
 		StringBuilder query = new StringBuilder();
-		query.append("select * from user where nickname = ?");
+		query.append("select * from user where nickname = :nickname");
+		Map<String, Object> param = Map.of("nickname", nickname);
+		try {
 
-		List<UserDTO> result = jdbcTemplate.query(query.toString(), itemRowMapper(), nickname);
-
-		return result.stream().findFirst();
+			UserDTO result = namedParameterJdbcTemplate.queryForObject(query.toString(), param, UserRowMapper());
+			return Optional.ofNullable(result);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		} catch (IncorrectResultSizeDataAccessException e) {
+			throw new UserIncorrectResultSizeException("조회한 결과가 2건 이상입니다.");
+		}
 	}
 
-	private RowMapper<UserDTO> itemRowMapper() {
-		return (rs, rowNum) -> {
-			UserDTO userDTO = new UserDTO();
-
-			userDTO.setUserId(rs.getString("user_id"));
-			userDTO.setUserName(rs.getString("user_name"));
-			userDTO.setUserPassword(rs.getString("user_password"));
-			userDTO.setUserNickname(rs.getString("nickname"));
-			userDTO.setUserEmail(rs.getString("email"));
-			userDTO.setUserPhoneNumber(rs.getString("phone_number"));
-			userDTO.setUserLoginType(rs.getString("login_type"));
-			userDTO.setUserAccessToken(rs.getString("access_token"));
-			userDTO.setUserRefreshToken(rs.getString("refresh_token"));
-			userDTO.setUserActive(rs.getBoolean("active"));
-			userDTO.setCreateId(rs.getString("created_id"));
-			userDTO.setCreatedDate(rs.getDate("created_date"));
-			userDTO.setModifiedId(rs.getString("modified_id"));
-			userDTO.setModifiedDate(rs.getDate("modified_date"));
-
-			return userDTO;
-		};
+	private RowMapper<UserDTO> UserRowMapper() {
+		return BeanPropertyRowMapper.newInstance(UserDTO.class);
 	}
 }
