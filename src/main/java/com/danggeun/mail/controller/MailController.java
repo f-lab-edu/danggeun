@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.danggeun.mail.dto.MailDTO;
-import com.danggeun.mail.exception.CertificationNumberMismatchException;
 import com.danggeun.mail.service.MailService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,8 @@ public class MailController {
 	 */
 	@PostMapping("/send")
 	public ResponseEntity<MailDTO> mailSend(@RequestBody MailDTO mailDTO) {
+		// 이메일 null 값, 형식 체크
+		mailDTO.validate();
 		return new ResponseEntity<>(mailService.send(mailDTO), HttpStatus.OK);
 	}
 
@@ -36,10 +37,7 @@ public class MailController {
 	 */
 	@PostMapping("/certification")
 	public ResponseEntity<MailDTO> certification(@RequestBody MailDTO mailDTO) {
-		if (mailService.mailCertification(mailDTO)) {
-			return new ResponseEntity<>(mailDTO, HttpStatus.OK);
-		} else {
-			throw new CertificationNumberMismatchException("인증번호가 일치하지 않습니다.");
-		}
+		mailService.mailCertification(mailDTO);
+		return new ResponseEntity<>(mailDTO, HttpStatus.OK);
 	}
 }

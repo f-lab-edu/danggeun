@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.danggeun.commons.util.EmailRedisService;
 import com.danggeun.commons.util.RandomNumber;
 import com.danggeun.mail.dto.MailDTO;
+import com.danggeun.mail.exception.CertificationNumberMismatchException;
+import com.danggeun.mail.exception.EmailCertificationNumberSendException;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -19,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class MailService {
 	private static final long DURATION = 180L;
 
-	private final JavaMailSender javaMailSender;
-	private final EmailRedisService emailRedisService;
+	JavaMailSender javaMailSender;
+	EmailRedisService emailRedisService;
 
 	/**
 	 * 이메일 인증번호 발송

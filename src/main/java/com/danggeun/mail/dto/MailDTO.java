@@ -2,6 +2,8 @@ package com.danggeun.mail.dto;
 
 import java.util.regex.Pattern;
 
+import org.springframework.util.StringUtils;
+
 import com.danggeun.mail.exception.EmailFormatException;
 import com.danggeun.mail.exception.EmailInvalidRequestException;
 
@@ -34,7 +36,7 @@ public class MailDTO {
 	 * 사용자 이메일 값 체크
 	 */
 	private void validateEmail() {
-		if (this.getTo() == null)
+		if (!StringUtils.hasText(this.getTo()))
 			throw new EmailInvalidRequestException("이메일 값이 누락됐습니다.");
 	}
 
