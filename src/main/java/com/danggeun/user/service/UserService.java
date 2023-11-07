@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.danggeun.mail.exception.EmailDuplicatedException;
 import com.danggeun.mail.exception.NoCertificationException;
+import com.danggeun.region.dto.RegionDTO;
 import com.danggeun.region.repository.RegionRepository;
 import com.danggeun.user.dto.UserDTO;
 import com.danggeun.user.exception.NicknameDuplicatedException;
@@ -45,12 +46,17 @@ public class UserService {
 
 		// 사용자 지역 정보 생성
 		UserDTO userRegionDTO = userRepository.findByEmail(result.getUserEmail()).get();
-		userRegionDTO.setLongitude(userDTO.getLongitude());
-		userRegionDTO.setLatitude(userDTO.getLatitude());
-		userRegionDTO.setRepresentRegionStatus(userDTO.getRepresentRegionStatus());
-		userRegionDTO.setRegionRangeStatus(userDTO.getRegionRangeStatus());
 
-		regionRepository.save(userRegionDTO);
+		RegionDTO regionDTO = new RegionDTO();
+		regionDTO.setUserId(userRegionDTO.getUserId());
+		regionDTO.setLongitude(userDTO.getLongitude());
+		regionDTO.setLatitude(userDTO.getLatitude());
+		regionDTO.setRepresentRegionStatus(userDTO.getRepresentRegionStatus());
+		regionDTO.setRegionRangeStatus(userDTO.getRegionRangeStatus());
+		regionDTO.setUserActive(userRegionDTO.isUserActive());
+		regionDTO.setCreatedId(userRegionDTO.getCreateId());
+		regionDTO.setModifiedId(userRegionDTO.getModifiedId());
+		regionRepository.save(regionDTO);
 
 		return result;
 	}

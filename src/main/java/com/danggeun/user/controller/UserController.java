@@ -13,7 +13,9 @@ import com.danggeun.user.dto.UserDTO;
 import com.danggeun.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/user")
@@ -28,23 +30,25 @@ public class UserController {
 	 */
 	@PostMapping()
 	public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+		// 사용자 가입 필수 데이터 중 null 값이 있는지, 비밀번호 형식이 맞는지 체크
+		userDTO.validate();
 
 		return new ResponseEntity<>(userService.join(userDTO), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/duplicated/email/{email}")
-	public ResponseEntity isDuplicatedEmail(@PathVariable String email) {
+	@GetMapping("/check/email/{email}")
+	public ResponseEntity<String> isDuplicatedEmail(@PathVariable String email) {
 		// 가입된 사용자 이메일 중복 체크
 		userService.isDuplicatedEmail(email);
 
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@GetMapping("/duplicated/nickname/{nickname}")
-	public ResponseEntity isDuplicatedNickname(@PathVariable String nickname) {
+	@GetMapping("/check/nickname/{nickname}")
+	public ResponseEntity<String> isDuplicatedNickname(@PathVariable String nickname) {
 		// 가입된 사용자 닉네임 중복 체크
 		userService.isDuplicatedNickname(nickname);
 
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
