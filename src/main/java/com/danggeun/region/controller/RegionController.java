@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danggeun.region.dto.LocationAdressResponse;
 import com.danggeun.region.service.RegionService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class RegionController {
 	 * @return region info
 	 */
 	@GetMapping(value = "/{address}")
-	public ResponseEntity<String> locationByAddress(@PathVariable String address) throws IOException {
+	public ResponseEntity<LocationAdressResponse> locationByAddress(@PathVariable String address) throws IOException {
 		return new ResponseEntity<>(locationService.findByAddress(address), HttpStatus.OK);
 	}
 
