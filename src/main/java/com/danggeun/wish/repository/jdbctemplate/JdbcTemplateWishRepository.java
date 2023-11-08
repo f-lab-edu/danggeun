@@ -53,7 +53,7 @@ public class JdbcTemplateWishRepository implements WishRespository {
 	}
 
 	@Override
-	public int modifyWish(WishRequestDto wishRequestDto) {
+	public WishResponseDto modifyWish(WishRequestDto wishRequestDto) {
 		StringBuilder sql = new StringBuilder("UPDATE wish SET ")
 			.append("active = :active, ")
 			.append("modified_date = now(), ")
@@ -63,11 +63,13 @@ public class JdbcTemplateWishRepository implements WishRespository {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
 			.addValue("wishId", wishRequestDto.getWishId())
-			.addValue("active", true)
+			.addValue("active", wishRequestDto.isActive())
 			.addValue("modifiedId", wishRequestDto.getModifiedId());
 
 		// DB 등록
-		return namedParameterJdbcTemplate.update(sql.toString(), param);
+		namedParameterJdbcTemplate.update(sql.toString(), param);
+
+		return wishResponseMapper.toWishResponseDto(wishRequestDto);
 	}
 
 	@Override

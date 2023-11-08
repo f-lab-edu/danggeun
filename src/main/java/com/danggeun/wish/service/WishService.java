@@ -29,6 +29,10 @@ public class WishService {
 		return result;
 	}
 
+	public WishResponseDto modifyWish(WishRequestDto wishRequestDto) {
+		return wishRespository.modifyWish(wishRequestDto);
+	}
+
 	public void deleteWish(Long wishId) {
 		wishRespository.deleteWish(wishId);
 	}

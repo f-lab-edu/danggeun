@@ -11,7 +11,7 @@ public interface WishRespository {
 
 	public WishResponseDto createWish(WishRequestDto wishRequestDto);
 
-	public int modifyWish(WishRequestDto wishRequestDto);
+	public WishResponseDto modifyWish(WishRequestDto wishRequestDto);
 
 	public int deleteWish(Long wishId);
 
