@@ -1,7 +1,6 @@
 package com.danggeun.wish.dto;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import com.danggeun.article.dto.ArticleRequestDto;
 
@@ -31,7 +30,7 @@ public class WishRequestDto {
 	 * 관심목록 ID 값 존재 여부 확인
 	 */
 	public void validateId() {
-		if (Objects.isNull(this.getWishId())) {
+		if (this.getWishId() == null) {
 			throw new IllegalArgumentException("관심목록 ID가 없습니다.");
 		}
 	}
