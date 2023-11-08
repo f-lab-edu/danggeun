@@ -23,8 +23,8 @@ dependencies {
     // mysql
     implementation 'mysql:mysql-connector-java:5.1.49'
 
-    // jdbc
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // jdbc -> jpa ( jpa 의존성 가져올 때 jdbc 도 들어 있음 )
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 
     // lombok
