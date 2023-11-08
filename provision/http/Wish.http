@@ -39,18 +39,10 @@ Content-Type: application/json
 }
 
 ### 3. 관심목록 삭제
-DELETE {{wish-api}}
+DELETE {{wish-api}}/1
 Content-Type: application/json
 
 {
-  "articleDto": {
-    "articleId": 1,
-    "active": true
-  },
-  "wishId": 1,
-  "active": true,
-  "modifiedDate": null,
-  "modifiedId": 1
 }
 
 ### 4. 관심목록 조회

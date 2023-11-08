@@ -29,8 +29,8 @@ public class WishService {
 		return result;
 	}
 
-	public void deleteWish(WishRequestDto wishRequestDto) {
-		wishRespository.deleteWish(wishRequestDto);
+	public void deleteWish(Long wishId) {
+		wishRespository.deleteWish(wishId);
 	}
 
 	public List<WishResponseDto> findByAll(Pageable pageable) {

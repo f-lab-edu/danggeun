@@ -37,13 +37,10 @@ public class WishController {
 	}
 
 	// 관심목록 삭제
-	@DeleteMapping
-	public ResponseEntity deleteWish(@RequestBody WishRequestDto wishRequestDto) {
-		// ID 존재 여부 확인
-		wishRequestDto.validateId();
-
+	@DeleteMapping("/{wishId}")
+	public ResponseEntity deleteWish(@PathVariable("wishId") Long wishId) {
 		// 삭제
-		wishService.deleteWish(wishRequestDto);
+		wishService.deleteWish(wishId);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

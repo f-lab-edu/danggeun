@@ -13,7 +13,7 @@ public interface WishRespository {
 
 	public int modifyWish(WishRequestDto wishRequestDto);
 
-	public int deleteWish(WishRequestDto wishRequestDto);
+	public int deleteWish(Long wishId);
 
 	public WishResponseDto findById(Long wishId);
 
