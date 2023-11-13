@@ -40,8 +40,7 @@ public class UserService {
 		validateCertificationUser(userDTO.isUserEmailCertificationFlag());
 
 		// 비밀번호 암호화
-		String encodePw = passwordEncoder.encode(userDTO.getUserPassword());
-		userDTO.setUserPassword(encodePw);
+		passwordEncrypt(userDTO);
 		UserDTO result = userRepository.save(userDTO);
 
 		// 사용자 지역 정보 생성
@@ -59,6 +58,16 @@ public class UserService {
 		regionRepository.save(regionDTO);
 
 		return result;
+	}
+
+	/**
+	 * 사용자 비밀번호 암호화
+	 * @param userDTO
+	 */
+	private void passwordEncrypt(UserDTO userDTO) {
+		// 비밀번호 암호화
+		String encodePw = passwordEncoder.encode(userDTO.getUserPassword());
+		userDTO.setUserPassword(encodePw);
 	}
 
 	/**
