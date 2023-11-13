@@ -3,6 +3,9 @@ package com.danggeun.user.dto;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import org.springframework.util.StringUtils;
+
+import com.danggeun.user.enumerate.LoginType;
 import com.danggeun.user.exception.UserInvalidRequestException;
 import com.danggeun.user.exception.UserPasswordFormatException;
 
@@ -15,13 +18,13 @@ import lombok.ToString;
 @ToString
 public class UserDTO {
 
-	private String userId;
+	private long userId;
 	private String userName;
 	private String userPassword;
 	private String userNickname;
 	private String userEmail;
 	private String userPhoneNumber;
-	private String userLoginType;
+	private LoginType userLoginType;
 	private String userAccessToken;
 	private String userRefreshToken;
 	private boolean userActive;
@@ -42,7 +45,7 @@ public class UserDTO {
 	public void validate() {
 
 		// 사용자 정보 필수 데이터 체크
-		validateUserInfo();
+		validateUserNullable();
 
 		// 사용자 패스워드 형식 체크
 		validateFromPassword();
@@ -51,10 +54,17 @@ public class UserDTO {
 	/**
 	 * 사용자 정보 필수 데이터 체크
 	 */
-	private void validateUserInfo() {
-		if (this.getUserName() == null || this.getUserNickname() == null
-			|| this.getUserEmail() == null)
+	private void validateUserNullable() {
+		if (!StringUtils.hasText(this.getUserName()) || !StringUtils.hasText(this.getUserNickname())
+			|| !StringUtils.hasText(this.getUserEmail()))
 			throw new UserInvalidRequestException("사용자 정보가 누락됐습니다.");
+
+		switch (this.getUserLoginType()) {
+			case DEFAULT, NAVER, KAKAO, GOOGLE:
+				break;
+			default:
+				throw new UserInvalidRequestException("사용자 정보가 누락됐습니다.");
+		}
 	}
 
 	/**
