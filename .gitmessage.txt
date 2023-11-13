@@ -1,0 +1,17 @@
+feature#이슈번호-브랜치명
+이슈 : #이슈번호 제목
+<BLANK LINE>
+<body>
+<BLANK LINE>
+
+################
+# feature : 기능 추가
+# fix : 버그 수정
+# docs(guide) : 문서 수정
+# test : 테스트 코드 추가
+# refactor : 코드 리팩토링
+# style : 코드 의미에 영향을 주지 않는 변경사항
+# cicd : CI/CD 관련 설정
+# build : 빌드 관련 파일 수정
+# perf : 성능 개선
+# chore : 그 외 자잘한 수정
