@@ -33,4 +33,4 @@ echo "> 새 애플리케이션 배포"
 # JAR_NAME=#(ls -tr $REPOSITORY/ |grep jar|tail -n 1)
 JAR_NAME=$(ls -tr $REPOSITORY/_work/danggeun/danggeun/build/libs/*.jar | tail -n 1)
 echo "> JAR Name : $JAR_NAME"
-nohup java -jar $JAR_NAME 1> standard.out 2> standard.err &
+nohup java -jar $JAR_NAME -spring.profiles.active=dev 1> standard.out 2> standard.err &
