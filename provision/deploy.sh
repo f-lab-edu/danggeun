@@ -1,24 +1,11 @@
 #!/bin/bash
-REPOSITORY=/home/project
+REPOSITORY=/home/actions-runner
 PROJECT_NAME=danggeun
 LOG_FILE=standard
 
-cd $REPOSITORY/$PROJECT_NAME/
-
-echo "> $PROJECT_NAME Git pull start"
-git pull
-
-echo "> 프로젝트 Build 시작"
-./gradlew build
-
-echo "> project 디렉토리로 이동"
-cd $REPOSITORY
-
-echo "> Build 파일 복사"
-cp $REPOSITORY/$PROJECT_NAME/build/libs/*.jar $REPOSITORY/
+cd $REPOSITORY/
 
 echo "> 현재 구동중인 애플리케이션 PID 확인"
-# CURRENT_PID=$(ps -f | grep ${PROJECT_NAME}.*.jar)
 CURRENT_PID=$(lsof -i tcp:8080 | awk 'NR!=1 {print$2}')
 
 echo "현재 구동중인 애플리케이션 PID : $CURRENT_PID"
@@ -44,6 +31,6 @@ fi
 
 echo "> 새 애플리케이션 배포"
 # JAR_NAME=#(ls -tr $REPOSITORY/ |grep jar|tail -n 1)
-JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
+JAR_NAME=$(ls -tr $REPOSITORY/_work/danggeun/danggeun/build/libs/*.jar | tail -n 1)
 echo "> JAR Name : $JAR_NAME"
 nohup java -jar $JAR_NAME 1> standard.out 2> standard.err &

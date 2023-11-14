@@ -41,3 +41,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
           min-coverage-changed-files: 10
+  deploy:
+    needs: build
+
+    if: github.event_name != 'pull_request'
+
+    runs-on: self-hosted
+
+    steps:
+      - name: working directory cd and deploy start
+        run: |
+          cd /home/actions-runner
+          pwd
+          chmod +x ./deploy.sh
+          sudo ./deploy.sh
