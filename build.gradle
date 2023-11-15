@@ -1,26 +1,74 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.2'
-	id 'io.spring.dependency-management' version '1.1.2'
+    id 'java'
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.2'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //web
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //RandomStringUtils
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    //jdbc
+    implementation 'mysql:mysql-connector-java:5.1.49'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    //http RestTemplate
+    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    //lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    //session-redis
+    implementation 'org.springframework.session:spring-session-data-redis'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    //validate
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //mail send
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //oauth
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
