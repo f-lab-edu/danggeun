@@ -53,23 +53,19 @@ public class JdbcTemplateWishRepository implements WishRespository {
 	}
 
 	@Override
-	public WishResponseDto modifyWish(WishRequestDto wishRequestDto) {
+	public int modifyWish(Long wishId) {
 		StringBuilder sql = new StringBuilder("UPDATE wish SET ")
 			.append("active = :active, ")
-			.append("modified_date = now(), ")
-			.append("modified_id = :modifiedId ")
+			.append("modified_date = now() ")
 			.append("WHERE wish_id = :wishId ");
 
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
-			.addValue("wishId", wishRequestDto.getWishId())
-			.addValue("active", wishRequestDto.isActive())
-			.addValue("modifiedId", wishRequestDto.getModifiedId());
+			.addValue("wishId", wishId)
+			.addValue("active", true);
 
 		// DB 등록
-		namedParameterJdbcTemplate.update(sql.toString(), param);
-
-		return wishResponseMapper.toWishResponseDto(wishRequestDto);
+		return namedParameterJdbcTemplate.update(sql.toString(), param);
 	}
 
 	@Override

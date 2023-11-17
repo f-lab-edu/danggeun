@@ -18,19 +18,17 @@ public class WishService {
 	private final WishRespository wishRespository;
 
 	public WishResponseDto createWish(WishRequestDto wishRequestDto) {
-		WishResponseDto result = null;
 		if (wishRequestDto.hasId()) {
-			result = wishRespository.findById(wishRequestDto.getWishId());
 			// 기등록 된 케이스의 경우 active 만 살리기
-			wishRespository.modifyWish(wishRequestDto);
+			wishRespository.modifyWish(wishRequestDto.getWishId());
+			return wishRespository.findById(wishRequestDto.getWishId());
 		} else {
-			result = wishRespository.createWish(wishRequestDto);
+			return wishRespository.createWish(wishRequestDto);
 		}
-		return result;
 	}
 
-	public WishResponseDto modifyWish(WishRequestDto wishRequestDto) {
-		return wishRespository.modifyWish(wishRequestDto);
+	public int modifyWish(Long wishId) {
+		return wishRespository.modifyWish(wishId);
 	}
 
 	public void deleteWish(Long wishId) {

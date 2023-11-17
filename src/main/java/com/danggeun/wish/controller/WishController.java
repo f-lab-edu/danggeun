@@ -38,9 +38,11 @@ public class WishController {
 	}
 
 	// 관심목록 수정
-	@PutMapping
-	public ResponseEntity<WishResponseDto> modifyWish(@RequestBody WishRequestDto wishRequestDto) {
-		return new ResponseEntity<>(wishService.modifyWish(wishRequestDto), HttpStatus.OK);
+	@PutMapping("/{wishId}")
+	public ResponseEntity modifyWish(@PathVariable("wishId") Long wishId) {
+		wishService.modifyWish(wishId);
+		
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	// 관심목록 삭제
