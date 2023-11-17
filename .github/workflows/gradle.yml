@@ -13,6 +13,12 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
+# (Workflow + branch) 하나만 동작
+# 동일한 group 의 이벤트 발생 시 기존 Runner Cancel 처리
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -65,6 +71,10 @@ jobs:
     needs: build
     # Git event 가 Push 인 경우 배포 진행
     if: github.event_name != 'pull_request'
+    # ${{ github.workflow }} + deploy 하나의 Workflow 에서 deploy 작업이 겹치면 이전 Workflow Cancel
+    concurrency:
+      group: ${{ github.workflow }}-depoly
+      cancel-in-progress: true
 
     steps:
       # Upload 한 artifact Download
@@ -90,6 +100,17 @@ jobs:
           key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/project
-            chmod +x ./deploy.sh
-            sudo ./deploy.sh
+            echo "> 현재 구동중인 애플리케이션 PID 확인"
+            CURRENT_PID=$(lsof -i tcp:8080 | awk 'NR!=1 {print$2}')
+            
+            echo "현재 구동중인 애플리케이션 PID : $CURRENT_PID"
+            if [ -z "$CURRENT_PID" ]; then
+              echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+            else
+              echo "> kill -9 $CURRENT_PID"
+              kill -9 $CURRENT_PID
+              sleep 5
+            fi
+            
+            echo "> 새 애플리케이션 구동"
+            nohup java -jar ${{ secrets.FILE_PATH }} -spring.profiles.active=dev &
