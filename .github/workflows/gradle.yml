@@ -17,21 +17,38 @@ permissions:
   contents: read
 
 jobs:
+  # Gradle build and test
   build:
-
-    runs-on: self-hosted
-
+    runs-on: ubuntu-latest
     steps:
+      # Git Project Clone
       - uses: actions/checkout@v3
-      #      - name: Set up JDK 17
-      #        uses: actions/setup-java@v3
-      #        with:
-      #          java-version: '17'
-      #          distribution: 'temurin'
+      # Java install
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      # Project Build and Test
       - name: Build with Gradle
         uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
         with:
           arguments: build
+      # Jar 파일 업로드
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: danggeun-artifact
+          path: build/libs/*.jar
+
+  # Jacoco coverage
+  coverage:
+    runs-on: ubuntu-latest
+    # build 처리 후 진행
+    needs: build
+    # Git event 가 PR 인 경우에만 리포트 코멘트 등록
+    if: github.event_name == 'pull_request'
+    steps:
       - name: 테스트 커버리지를 PR에 코멘트로 등록합니다
         id: jacoco
         uses: madrapps/jacoco-report@v1.2
