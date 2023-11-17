@@ -58,17 +58,38 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
           min-coverage-changed-files: 10
-  deploy:
-    needs: build
 
+  deploy:
+    runs-on: ubuntu-latest
+    # build 처리 후 진행
+    needs: build
+    # Git event 가 Push 인 경우 배포 진행
     if: github.event_name != 'pull_request'
 
-    runs-on: self-hosted
-
     steps:
-      - name: working directory cd and deploy start
-        run: |
-          cd /home/actions-runner
-          pwd
-          chmod +x ./deploy.sh
-          sudo ./deploy.sh
+      # Upload 한 artifact Download
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: danggeun-artifact
+      # SSH 연결 시 Agent 적용
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+      # Downlaoded artifact 서버에 전달
+      # path : /home/project/
+      - name: SCP transfer
+        run: scp -P ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.FILE_NAME }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.FILE_PATH }}
+      # 서버 종료 및 재시작 스크립트 실행
+      - name: executing remote ssh commands server stop and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /home/project
+            chmod +x ./deploy.sh
+            sudo ./deploy.sh
