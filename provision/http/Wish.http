@@ -20,22 +20,10 @@ Content-Type: application/json
 }
 
 ### 2. 관심목록 수정
-POST {{wish-api}}
+PUT {{wish-api}}/1
 Content-Type: application/json
 
 {
-  "articleDto": {
-    "articleId": 2,
-    "active": true,
-    "registeredDate": null,
-    "registeredId": "develop_test",
-    "modifiedDate": null,
-    "modifiedId": "develop_test"
-  },
-  "wishId": 1,
-  "active": false,
-  "modifiedDate": null,
-  "modifiedId": 1
 }
 
 ### 3. 관심목록 삭제
