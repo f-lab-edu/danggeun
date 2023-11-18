@@ -4,6 +4,15 @@ spring:
     url: jdbc:mysql://101.101.217.19:3306/danggeun?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: develop
     password: danggeun1!
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
 
   session:
     store-type: redis

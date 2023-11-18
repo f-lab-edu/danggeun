@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ActiveProfiles("local")
+@ActiveProfiles("dev")
 @SpringBootTest
 @Transactional
 public @interface SpringIntegrationTest {

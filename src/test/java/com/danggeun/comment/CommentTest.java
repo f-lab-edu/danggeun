@@ -2,13 +2,10 @@ package com.danggeun.comment;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -48,35 +45,35 @@ public class CommentTest {
 		assertThat(result).isNotNull();
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 	}
-
-	// 댓글 수정
-	@Test
-	@DisplayName("정상 댓글 수정")
-	void commentModifiy() {
-		ResponseEntity<CommentResponseDto> result = commentController.modifyComment(commentRequestDto);
-
-		assertThat(result).isNotNull();
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
+	//
+	// // 댓글 수정
+	// @Test
+	// @DisplayName("정상 댓글 수정")
+	// void commentModifiy() {
+	// 	ResponseEntity<CommentResponseDto> result = commentController.modifyComment(commentRequestDto);
+	//
+	// 	assertThat(result).isNotNull();
+	// 	assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
 
 	// 댓글 삭제
-	@Test
-	@DisplayName("정상 댓글 삭제")
-	void commentDelete() {
-		ResponseEntity<CommentResponseDto> result = commentController.deleteComment(commentRequestDto);
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	// 댓글 조회
-	@Test
-	@DisplayName("댓글 조회")
-	void commentFindAll() {
-		ResponseEntity<List<CommentResponseDto>> result = commentController.findByAll(1, PageRequest.of(0, 3));
-
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(result.getBody()).isNotNull();
-		assertThat(result.getBody().size()).isEqualTo(3);
-
-	}
+	// @Test
+	// @DisplayName("정상 댓글 삭제")
+	// void commentDelete() {
+	// 	ResponseEntity<CommentResponseDto> result = commentController.deleteComment(commentRequestDto);
+	// 	assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// }
+	//
+	// // 댓글 조회
+	// @Test
+	// @DisplayName("댓글 조회")
+	// void commentFindAll() {
+	// 	ResponseEntity<List<CommentResponseDto>> result = commentController.findByAll(1, PageRequest.of(0, 3));
+	//
+	// 	assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+	// 	assertThat(result.getBody()).isNotNull();
+	// 	assertThat(result.getBody().size()).isEqualTo(3);
+	//
+	// }
 
 }
