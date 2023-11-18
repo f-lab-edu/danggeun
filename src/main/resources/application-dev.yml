@@ -19,7 +19,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 27.96.135.14
 
   mail:
     host: smtp.gmail.com
