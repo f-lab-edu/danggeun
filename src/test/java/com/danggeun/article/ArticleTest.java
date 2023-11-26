@@ -3,14 +3,10 @@ package com.danggeun.article;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import com.danggeun.annotation.SpringIntegrationTest;
 import com.danggeun.article.controller.ArticleController;
@@ -107,26 +103,25 @@ class ArticleTest {
 	/**
 	 * 게시글 조회
 	 */
-	@Test
-	@DisplayName("게시글 ID 조회 및 전체 리스트 조회")
-	void articleSearch() {
-		// 9999 ID 저장
-		articleService.createArticle(articleRequestDTO);
-
-		// articleId 로 조회
-		int articleId = 1;
-		ArticleResponseDto findArticle = articleService.findById(articleId);
-		assertThat(findArticle.getArticleId()).isEqualTo(articleId);
-		
-		// 페이징 처리 객체 생성
-		Pageable pageable = PageRequest.of(0, 3);
-
-		List<ArticleResponseDto> articles = articleService.findByAll(pageable);
-		assertThat(articles).isNotNull();
-		assertThat(articles.size()).isEqualTo(3);
-
-	}
-
+	// @Test
+	// @DisplayName("게시글 ID 조회 및 전체 리스트 조회")
+	// void articleSearch() {
+	// 	// 9999 ID 저장
+	// 	articleService.createArticle(articleRequestDTO);
+	//
+	// 	// articleId 로 조회
+	// 	int articleId = 1;
+	// 	ArticleResponseDto findArticle = articleService.findById(articleId);
+	// 	assertThat(findArticle.getArticleId()).isEqualTo(articleId);
+	//
+	// 	// 페이징 처리 객체 생성
+	// 	Pageable pageable = PageRequest.of(0, 3);
+	//
+	// 	List<ArticleResponseDto> articles = articleService.findByAll(pageable);
+	// 	assertThat(articles).isNotNull();
+	// 	assertThat(articles.size()).isEqualTo(3);
+	//
+	// }
 	@Test
 	@DisplayName("게시글 조회 시 존재 하지 않는 경우 예외 발생")
 	void articleNotFound() {

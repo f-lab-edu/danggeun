@@ -33,6 +33,12 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+    // commons
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // session-redis
     implementation 'org.springframework.session:spring-session-data-redis'
 
