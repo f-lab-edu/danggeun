@@ -1,8 +1,8 @@
 package com.danggeun.article.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,8 +75,9 @@ public class ArticleService {
 	 * @return ArticleResponseDto
 	 */
 	public ArticleResponseDto findById(int articleId) {
-		Optional<ArticleResponseDto> result = articleRepository.findById(articleId);
-		return result.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article article = find.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
+		return new ArticleResponseDto(article);
 	}
 
 	/**
@@ -84,9 +85,9 @@ public class ArticleService {
 	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
-	public List<ArticleResponseDto> findByAll(Pageable pageable) {
-		articleJpaRepository.findAll(pageable);
-		return articleRepository.findByAll(pageable);
+	public Page<ArticleResponseDto> findByAll(Pageable pageable) {
+		Page<Article> articles = articleJpaRepository.findAll(pageable);
+		return articles.map(ArticleResponseDto::new);
 	}
 
 }

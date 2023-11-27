@@ -2,6 +2,7 @@ package com.danggeun.article.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -92,11 +93,11 @@ public class ArticleController {
 	/**
 	 * 게시글 전체 조회
 	 * @param pageable
-	 * @return ResponseEntity<List < ArticleResponseDto>>
+	 * @return ResponseEntity<Page < ArticleResponseDto>>
 	 */
 	@GetMapping
-	public ResponseEntity<List<ArticleResponseDto>> findByAll(
-		@PageableDefault(size = 3, sort = "article_id", direction = Sort.Direction.DESC) Pageable pageable) {
+	public ResponseEntity<Page<ArticleResponseDto>> findByAll(
+		@PageableDefault(size = 3, sort = "articleId", direction = Sort.Direction.DESC) Pageable pageable) {
 		return new ResponseEntity<>(articleService.findByAll(pageable), HttpStatus.OK);
 	}
 
