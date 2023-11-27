@@ -65,7 +65,7 @@ class ArticleTest {
 			articleController.modifyArticle(articleRequestDTO);
 		});
 		assertThrows(IllegalArgumentException.class, () -> {
-			articleController.deleteArticle(articleRequestDTO);
+			articleController.deleteArticle(articleRequestDTO.getArticleId());
 		});
 
 	}

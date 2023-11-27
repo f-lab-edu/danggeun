@@ -60,10 +60,13 @@ public class ArticleService {
 
 	/**
 	 * 게시글 삭제
-	 * @param articleRequestDto
+	 * @param articleId
 	 */
-	public void deleteArticle(ArticleRequestDto articleRequestDto) {
-		articleRepository.deleteArticle(articleRequestDto);
+	@Transactional
+	public void deleteArticle(Integer articleId) {
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article article = find.orElseThrow(ArticleNotFoundException::new);
+		articleJpaRepository.delete(article);
 	}
 
 	/**

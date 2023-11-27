@@ -64,14 +64,12 @@ public class ArticleController {
 
 	/**
 	 * 게시글 삭제
-	 * @param articleRequestDto
+	 * @param articleId
 	 * @return ResponseEntity
 	 */
-	@DeleteMapping
-	public ResponseEntity<ArticleResponseDto> deleteArticle(@RequestBody ArticleRequestDto articleRequestDto) {
-		// 게시글 ID 존재 여부 확인
-		articleRequestDto.validateId();
-		articleService.deleteArticle(articleRequestDto);
+	@DeleteMapping("/{articleId}")
+	public ResponseEntity<ArticleResponseDto> deleteArticle(@PathVariable("articleId") Integer articleId) {
+		articleService.deleteArticle(articleId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

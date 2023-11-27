@@ -30,14 +30,8 @@ Content-Type: application/json
 }
 
 ### 3. 게시글 삭제 -- @PathVariable 방식
-DELETE {{article-api}}
+DELETE {{article-api}}/1
 Content-Type: application/json
-
-{
-  "articleId": 9999,
-  "userId": 9999,
-  "modifiedId": "develop_test"
-}
 
 ### 4. 게시글 상세 조회 -- @PathVariable 방식
 GET {{article-api}}/1
