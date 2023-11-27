@@ -1,8 +1,9 @@
 package com.danggeun.article.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.enumerate.ArticleType;
 import com.danggeun.comment.dto.CommentResponseDto;
 
@@ -14,6 +15,24 @@ import lombok.Data;
 @Data
 public class ArticleResponseDto {
 
+	public ArticleResponseDto() {
+	}
+
+	public ArticleResponseDto(Article article) {
+		this.articleId = article.getArticleId();
+		this.userId = article.getUserId();
+		this.commentId = article.getCommentId();
+		this.regionId = article.getRegionId();
+		this.groupId = article.getGroupId();
+		this.subject = article.getSubject();
+		this.context = article.getContext();
+		this.articleType = article.getArticleType();
+		this.price = article.getPrice();
+		this.active = article.isActive();
+		this.registeredDate = article.getRegisteredDate();
+		this.modifiedDate = article.getModifiedDate();
+	}
+
 	private Integer articleId;
 	private Integer userId;
 	private Integer commentId;
@@ -24,9 +43,9 @@ public class ArticleResponseDto {
 	private ArticleType articleType;
 	private Integer price;
 	private boolean active;
-	private Date registeredDate;
+	private LocalDateTime registeredDate;
 	private String registeredId;
-	private Date modifiedDate;
+	private LocalDateTime modifiedDate;
 	private String modifiedId;
 
 	private List<CommentResponseDto> comments;

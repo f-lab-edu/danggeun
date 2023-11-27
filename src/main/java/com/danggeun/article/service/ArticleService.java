@@ -5,27 +5,38 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.exception.ArticleNotFoundException;
 import com.danggeun.article.repository.ArticleRepository;
+import com.danggeun.article.repository.jpa.ArticleJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArticleService {
 
 	private final ArticleRepository articleRepository;
+	private final ArticleJpaRepository articleJpaRepository;
 
 	/**
 	 * 게시글 생성
 	 * @param articleRequestDto
 	 * @return ArticleResponseDto
 	 */
+	@Transactional
 	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
-		return articleRepository.createArticle(articleRequestDto);
+		// Request DTO -> Entity
+		Article article = articleJpaRepository.save(articleRequestDto.toEntity());
+
+		// Entity -> Response DTO
+		Optional<Article> findArticle = articleJpaRepository.findById(article.getArticleId());
+		return new ArticleResponseDto(findArticle.get());
 	}
 
 	/**
@@ -61,6 +72,7 @@ public class ArticleService {
 	 * @return List<ArticleResponseDto>
 	 */
 	public List<ArticleResponseDto> findByAll(Pageable pageable) {
+		articleJpaRepository.findAll(pageable);
 		return articleRepository.findByAll(pageable);
 	}
 

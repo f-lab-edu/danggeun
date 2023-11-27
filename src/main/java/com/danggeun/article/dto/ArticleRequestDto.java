@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.util.StringUtils;
 
+import com.danggeun.article.domain.Article;
 import com.danggeun.article.enumerate.ArticleType;
 
 import lombok.AllArgsConstructor;
@@ -72,6 +73,19 @@ public class ArticleRequestDto {
 				throw new IllegalArgumentException("정상적인 게시글 타입이 아닙니다.");
 		}
 
+	}
+
+	public Article toEntity() {
+		return Article.builder()
+			.userId(userId)
+			.commentId(commentId)
+			.regionId(regionId)
+			.groupId(groupId)
+			.subject(subject)
+			.context(context)
+			.articleType(articleType)
+			.price(price)
+			.build();
 	}
 
 }
