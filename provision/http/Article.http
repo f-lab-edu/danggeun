@@ -12,11 +12,7 @@ Content-Type: application/json
   "context": "null context",
   "articleType": 0,
   "price": null,
-  "active": true,
-  "registeredDate": null,
-  "registeredId": "develop_test",
-  "modifiedDate": null,
-  "modifiedId": "develop_test"
+  "active": true
 }
 
 ### 2. 게시글 수정
@@ -24,16 +20,13 @@ PUT {{article-api}}
 Content-Type: application/json
 
 {
-  "articleId": 9999,
+  "articleId": 1,
   "userId": 9999,
   "regionId": 9999,
   "subject": "develop article subject",
   "context": "null context modify",
   "articleType": 0,
-  "price": null,
-  "active": true,
-  "modifiedDate": null,
-  "modifiedId": "develop_test"
+  "price": null
 }
 
 ### 3. 게시글 삭제 -- @PathVariable 방식

@@ -44,8 +44,18 @@ public class ArticleService {
 	 * @param articleRequestDto
 	 * @return ArticleResponseDto
 	 */
+	@Transactional
 	public ArticleResponseDto modifyArticle(ArticleRequestDto articleRequestDto) {
-		return articleRepository.modifyArticle(articleRequestDto);
+		Optional<Article> find = articleJpaRepository.findById(articleRequestDto.getArticleId());
+		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
+
+		findArticle.setSubject(articleRequestDto.getSubject());
+		findArticle.setContext(articleRequestDto.getContext());
+		findArticle.setArticleType(articleRequestDto.getArticleType());
+		findArticle.setPrice(articleRequestDto.getPrice());
+
+		Optional<Article> result = articleJpaRepository.findById(findArticle.getArticleId());
+		return new ArticleResponseDto(result.get());
 	}
 
 	/**
