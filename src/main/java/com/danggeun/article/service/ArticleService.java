@@ -12,17 +12,15 @@ import com.danggeun.article.dto.ArticleEntityMapperImpl;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.exception.ArticleNotFoundException;
-import com.danggeun.article.repository.ArticleRepository;
 import com.danggeun.article.repository.jpa.ArticleJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ArticleService {
 
-	private final ArticleRepository articleRepository;
 	private final ArticleJpaRepository articleJpaRepository;
 	private final ArticleEntityMapperImpl articleEntityMapper = new ArticleEntityMapperImpl();
 
@@ -31,7 +29,6 @@ public class ArticleService {
 	 * @param articleRequestDto
 	 * @return ArticleResponseDto
 	 */
-	@Transactional
 	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
 		// Request DTO -> Entity
 		Article article = articleEntityMapper.toArticleEntity(articleRequestDto);
@@ -47,7 +44,6 @@ public class ArticleService {
 	 * @param articleRequestDto
 	 * @return ArticleResponseDto
 	 */
-	@Transactional
 	public ArticleResponseDto modifyArticle(ArticleRequestDto articleRequestDto) {
 		Optional<Article> find = articleJpaRepository.findById(articleRequestDto.getArticleId());
 		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
@@ -65,7 +61,6 @@ public class ArticleService {
 	 * 게시글 삭제
 	 * @param articleId
 	 */
-	@Transactional
 	public void deleteArticle(Integer articleId) {
 		Optional<Article> find = articleJpaRepository.findById(articleId);
 		Article article = find.orElseThrow(ArticleNotFoundException::new);
@@ -77,6 +72,7 @@ public class ArticleService {
 	 * @param articleId
 	 * @return ArticleResponseDto
 	 */
+	@Transactional(readOnly = true)
 	public ArticleResponseDto findById(int articleId) {
 		Optional<Article> find = articleJpaRepository.findById(articleId);
 		Article article = find.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
@@ -88,6 +84,7 @@ public class ArticleService {
 	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
+	@Transactional(readOnly = true)
 	public Page<ArticleResponseDto> findByAll(Pageable pageable) {
 		Page<Article> articles = articleJpaRepository.findAll(pageable);
 		return articles.map(ArticleResponseDto::new);
