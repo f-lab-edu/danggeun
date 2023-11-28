@@ -47,24 +47,20 @@ public class CommentService {
 	}
 
 	public CommentResponseDto modifyComment(CommentRequestDto commentRequestDto) {
-		int articleId = commentRequestDto.getArticleId();
-		existsArticleCheck(articleId);
+		Optional<Comment> find = commentJpaRepository.findById(commentRequestDto.getCommentId());
+		Comment comment = find.get();
 
-		return commentRepository.modifyComment(commentRequestDto);
+		comment.setContext(commentRequestDto.getContext());
+		Optional<Comment> result = commentJpaRepository.findById(commentRequestDto.getCommentId());
+		return new CommentResponseDto(result.get());
 	}
 
 	public void deleteComment(CommentRequestDto commentRequestDto) {
-		int articleId = commentRequestDto.getArticleId();
-		existsArticleCheck(articleId);
 
 		commentRepository.deleteComment(commentRequestDto);
 	}
 
 	public List<CommentResponseDto> findAll(Pageable pageable, int articleId) {
 		return commentRepository.findByAll(pageable, articleId);
-	}
-
-	private void existsArticleCheck(int articleId) {
-		articleRepository.findById(articleId);
 	}
 }
