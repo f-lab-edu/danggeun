@@ -1,9 +1,6 @@
 package com.danggeun.comment.dto;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
-
-import com.danggeun.article.dto.ArticleRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentRequestDto {
 
-	private Long commentId;
+	private Integer commentId;
 	private String context;
 	private boolean active;
 	private LocalDateTime registeredDate;
@@ -26,13 +23,13 @@ public class CommentRequestDto {
 	private LocalDateTime modifiedDate;
 	private String modifiedId;
 
-	private ArticleRequestDto articleDto;
+	private Integer articleId;
 
 	/**
 	 * 댓글 ID 값 존재 여부 확인
 	 */
 	public void validateId() {
-		if (Objects.isNull(this.getCommentId())) {
+		if (this.getCommentId() == null) {
 			throw new IllegalArgumentException("댓글 ID가 없습니다.");
 		}
 	}

@@ -2,9 +2,8 @@ package com.danggeun.comment.dto;
 
 import java.time.LocalDateTime;
 
-import com.danggeun.article.dto.ArticleResponseDto;
+import com.danggeun.comment.domain.Comment;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,11 +11,19 @@ import lombok.NoArgsConstructor;
  * 댓글 response 전용 Data Transfer Object
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponseDto {
 
-	private Long commentId;
+	public CommentResponseDto(Comment comment) {
+		this.commentId = comment.getCommentId();
+		this.context = comment.getContext();
+		this.active = comment.isActive();
+		this.registeredDate = comment.getRegisteredDate();
+		this.modifiedDate = comment.getModifiedDate();
+		this.articleId = comment.getArticle().getArticleId();
+	}
+
+	private Integer commentId;
 	private String context;
 	private boolean active;
 	private LocalDateTime registeredDate;
@@ -24,6 +31,6 @@ public class CommentResponseDto {
 	private LocalDateTime modifiedDate;
 	private String modifiedId;
 
-	private ArticleResponseDto articleDto;
+	private Integer articleId;
 
 }

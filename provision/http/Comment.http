@@ -3,21 +3,14 @@ POST {{comment-api}}
 Content-Type: application/json
 
 {
-  "articleDto": {
-    "articleId": 1,
-    "active": true,
-    "registeredDate": null,
-    "registeredId": "develop_test",
-    "modifiedDate": null,
-    "modifiedId": "develop_test"
-  },
   "commentId": null,
   "context": "context test",
   "active": true,
   "registeredDate": null,
   "registeredId": "develop_test",
   "modifiedDate": null,
-  "modifiedId": "develop_test"
+  "modifiedId": "develop_test",
+  "articleId": 1
 }
 
 ### 2. 댓글 수정

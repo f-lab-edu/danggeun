@@ -33,8 +33,8 @@ public class CommentTest {
 	void setUp() {
 		articleRequestDTO = new ArticleRequestDto(1, 9999, null, 9999, null, "test subject", "test context",
 			ArticleType.NORMAL, null, true, null, "testDevelop", null, "testDevelop");
-		commentRequestDto = new CommentRequestDto(1L, "comment context", true, null, "testDevelop", null, "testDevelop",
-			articleRequestDTO);
+		commentRequestDto = new CommentRequestDto(1, "comment context", true, null, "testDevelop", null, "testDevelop",
+			1);
 	}
 
 	@Test
