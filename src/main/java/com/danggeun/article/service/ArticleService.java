@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.danggeun.article.domain.Article;
+import com.danggeun.article.dto.ArticleEntityMapperImpl;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.exception.ArticleNotFoundException;
@@ -23,6 +24,7 @@ public class ArticleService {
 
 	private final ArticleRepository articleRepository;
 	private final ArticleJpaRepository articleJpaRepository;
+	private final ArticleEntityMapperImpl articleEntityMapper = new ArticleEntityMapperImpl();
 
 	/**
 	 * 게시글 생성
@@ -32,7 +34,8 @@ public class ArticleService {
 	@Transactional
 	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
 		// Request DTO -> Entity
-		Article article = articleJpaRepository.save(articleRequestDto.toEntity());
+		Article article = articleEntityMapper.toArticleEntity(articleRequestDto);
+		articleJpaRepository.save(article);
 
 		// Entity -> Response DTO
 		Optional<Article> findArticle = articleJpaRepository.findById(article.getArticleId());

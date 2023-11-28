@@ -12,14 +12,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public class Article extends BaseTimeEntity {
@@ -40,19 +36,4 @@ public class Article extends BaseTimeEntity {
 	@Column(columnDefinition = "TINYINT(1)")
 	private boolean active;
 
-	@Builder
-	public Article(Integer articleId, Integer userId, Integer commentId, Integer regionId, Integer groupId,
-		String subject,
-		String context, ArticleType articleType, Integer price, boolean active) {
-		this.articleId = articleId;
-		this.userId = userId;
-		this.commentId = commentId;
-		this.regionId = regionId;
-		this.groupId = groupId;
-		this.subject = subject;
-		this.context = context;
-		this.articleType = articleType;
-		this.price = price;
-		this.active = active;
-	}
 }

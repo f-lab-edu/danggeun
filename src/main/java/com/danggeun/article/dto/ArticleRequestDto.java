@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.util.StringUtils;
 
-import com.danggeun.article.domain.Article;
 import com.danggeun.article.enumerate.ArticleType;
 
 import lombok.AllArgsConstructor;
@@ -74,18 +73,4 @@ public class ArticleRequestDto {
 		}
 
 	}
-
-	public Article toEntity() {
-		return Article.builder()
-			.userId(userId)
-			.commentId(commentId)
-			.regionId(regionId)
-			.groupId(groupId)
-			.subject(subject)
-			.context(context)
-			.articleType(articleType)
-			.price(price)
-			.build();
-	}
-
 }

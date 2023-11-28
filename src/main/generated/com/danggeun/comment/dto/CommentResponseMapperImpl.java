@@ -2,11 +2,13 @@ package com.danggeun.comment.dto;
 
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-10-16T20:51:05+0900",
+    date = "2023-11-28T16:34:00+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.8.1 (Amazon.com Inc.)"
 )
 public class CommentResponseMapperImpl implements CommentResponseMapper {
@@ -48,9 +50,13 @@ public class CommentResponseMapperImpl implements CommentResponseMapper {
         articleResponseDto.setArticleType( articleRequestDto.getArticleType() );
         articleResponseDto.setPrice( articleRequestDto.getPrice() );
         articleResponseDto.setActive( articleRequestDto.isActive() );
-        articleResponseDto.setRegisteredDate( articleRequestDto.getRegisteredDate() );
+        if ( articleRequestDto.getRegisteredDate() != null ) {
+            articleResponseDto.setRegisteredDate( LocalDateTime.ofInstant( articleRequestDto.getRegisteredDate().toInstant(), ZoneId.of( "UTC" ) ) );
+        }
         articleResponseDto.setRegisteredId( articleRequestDto.getRegisteredId() );
-        articleResponseDto.setModifiedDate( articleRequestDto.getModifiedDate() );
+        if ( articleRequestDto.getModifiedDate() != null ) {
+            articleResponseDto.setModifiedDate( LocalDateTime.ofInstant( articleRequestDto.getModifiedDate().toInstant(), ZoneId.of( "UTC" ) ) );
+        }
         articleResponseDto.setModifiedId( articleRequestDto.getModifiedId() );
 
         return articleResponseDto;
