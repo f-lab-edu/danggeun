@@ -22,6 +22,7 @@ public class Article extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "article_id")
 	private Integer articleId;
 	private Integer userId;
 	private Integer commentId;
