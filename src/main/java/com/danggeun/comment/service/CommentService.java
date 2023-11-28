@@ -1,21 +1,17 @@
 package com.danggeun.comment.service;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.danggeun.article.domain.Article;
 import com.danggeun.article.exception.ArticleNotFoundException;
-import com.danggeun.article.repository.ArticleRepository;
 import com.danggeun.article.repository.jpa.ArticleJpaRepository;
 import com.danggeun.comment.domain.Comment;
 import com.danggeun.comment.dto.CommentEntityMapperImpl;
 import com.danggeun.comment.dto.CommentRequestDto;
 import com.danggeun.comment.dto.CommentResponseDto;
-import com.danggeun.comment.repository.CommentRepository;
 import com.danggeun.comment.repository.jpa.CommentJpaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,10 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class CommentService {
-	private final CommentRepository commentRepository;
 	private final CommentJpaRepository commentJpaRepository;
 
-	private final ArticleRepository articleRepository;
 	private final ArticleJpaRepository articleJpaRepository;
 	private final CommentEntityMapperImpl commentEntityMapper = new CommentEntityMapperImpl();
 
@@ -59,9 +53,5 @@ public class CommentService {
 		Optional<Comment> find = commentJpaRepository.findById(commentId);
 		Comment comment = find.get();
 		commentJpaRepository.delete(comment);
-	}
-
-	public List<CommentResponseDto> findAll(Pageable pageable, int articleId) {
-		return commentRepository.findByAll(pageable, articleId);
 	}
 }
