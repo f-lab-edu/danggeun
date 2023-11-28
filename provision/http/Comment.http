@@ -23,19 +23,10 @@ Content-Type: application/json
 }
 
 ### 3. 댓글 삭제
-DELETE {{comment-api}}
+DELETE {{comment-api}}/1
 Content-Type: application/json
 
 {
-  "articleDto": {
-    "articleId": 1,
-    "active": true
-  },
-  "commentId": 1,
-  "context": "context test delete",
-  "active": true,
-  "modifiedDate": null,
-  "modifiedId": "develop_test"
 }
 
 ### 4. 댓글 조회

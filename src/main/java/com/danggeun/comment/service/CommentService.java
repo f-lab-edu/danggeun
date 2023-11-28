@@ -55,9 +55,10 @@ public class CommentService {
 		return new CommentResponseDto(result.get());
 	}
 
-	public void deleteComment(CommentRequestDto commentRequestDto) {
-
-		commentRepository.deleteComment(commentRequestDto);
+	public void deleteComment(Integer commentId) {
+		Optional<Comment> find = commentJpaRepository.findById(commentId);
+		Comment comment = find.get();
+		commentJpaRepository.delete(comment);
 	}
 
 	public List<CommentResponseDto> findAll(Pageable pageable, int articleId) {

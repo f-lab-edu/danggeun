@@ -37,7 +37,6 @@ public class CommentController {
 	@PostMapping
 	public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
 		return new ResponseEntity<>(commentService.createComment(commentRequestDto), HttpStatus.CREATED);
-
 	}
 
 	// 댓글 수정
@@ -45,20 +44,15 @@ public class CommentController {
 	public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인
 		commentRequestDto.validateId();
-
 		return new ResponseEntity<>(commentService.modifyComment(commentRequestDto), HttpStatus.OK);
 
 	}
 
 	// 댓글 삭제
-	@DeleteMapping
-	public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
-		// 댓글 ID 존재 여부 확인
-		commentRequestDto.validateId();
-
+	@DeleteMapping("/{commentId}")
+	public ResponseEntity deleteComment(@PathVariable("commentId") Integer commentId) {
 		// 댓글 삭제
-		commentService.deleteComment(commentRequestDto);
-
+		commentService.deleteComment(commentId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
