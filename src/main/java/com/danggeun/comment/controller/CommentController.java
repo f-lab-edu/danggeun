@@ -1,8 +1,13 @@
 package com.danggeun.comment.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,5 +53,13 @@ public class CommentController {
 		// 댓글 삭제
 		commentService.deleteComment(commentId);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	// 댓글 조회
+	@GetMapping("/{articleId}")
+	public ResponseEntity<Page<CommentResponseDto>> findByAll(
+		@PageableDefault(size = 3, sort = "commentId", direction = Sort.Direction.DESC) Pageable pageable,
+		@PathVariable("articleId") Integer articleId) {
+		return new ResponseEntity<>(commentService.findByAll(pageable, articleId), HttpStatus.OK);
 	}
 }

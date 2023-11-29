@@ -1,11 +1,9 @@
 package com.danggeun.article.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.danggeun.article.domain.Article;
 import com.danggeun.article.enumerate.ArticleType;
-import com.danggeun.comment.dto.CommentResponseDto;
 
 import lombok.Data;
 
@@ -21,7 +19,6 @@ public class ArticleResponseDto {
 	public ArticleResponseDto(Article article) {
 		this.articleId = article.getArticleId();
 		this.userId = article.getUserId();
-		this.commentId = article.getCommentId();
 		this.regionId = article.getRegionId();
 		this.groupId = article.getGroupId();
 		this.subject = article.getSubject();
@@ -35,7 +32,6 @@ public class ArticleResponseDto {
 
 	private Integer articleId;
 	private Integer userId;
-	private Integer commentId;
 	private Integer regionId;
 	private Integer groupId;
 	private String subject;
@@ -47,7 +43,5 @@ public class ArticleResponseDto {
 	private String registeredId;
 	private LocalDateTime modifiedDate;
 	private String modifiedId;
-
-	private List<CommentResponseDto> comments;
 
 }

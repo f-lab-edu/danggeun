@@ -76,6 +76,7 @@ public class ArticleService {
 	public ArticleResponseDto findById(int articleId) {
 		Optional<Article> find = articleJpaRepository.findById(articleId);
 		Article article = find.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
+
 		return new ArticleResponseDto(article);
 	}
 

@@ -30,15 +30,6 @@ public class CommentTest {
 
 	@BeforeEach
 	void setUp() {
-		// 게시글 등록
-		// article = new Article();
-		// article.setUserId(9999);
-		// article.setRegionId(9999);
-		// article.setSubject("test");
-		// article.setContext("test context");
-		// article.setArticleType(ArticleType.NORMAL);
-		// articleJpaRepository.save(article);
-
 		commentRequestDto = new CommentRequestDto(null,
 			"comment context",
 			true,

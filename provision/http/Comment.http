@@ -28,3 +28,10 @@ Content-Type: application/json
 
 {
 }
+
+### 4. 댓글 조회
+GET {{comment-api}}/1?page=0
+Content-Type: application/json
+
+{
+}

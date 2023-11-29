@@ -6,7 +6,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-11-28T16:34:00+0900",
+    date = "2023-11-29T19:41:09+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.8.1 (Amazon.com Inc.)"
 )
 public class ArticleResponseMapperImpl implements ArticleResponseMapper {
@@ -21,7 +21,6 @@ public class ArticleResponseMapperImpl implements ArticleResponseMapper {
 
         articleResponseDto.setArticleId( articleRequestDto.getArticleId() );
         articleResponseDto.setUserId( articleRequestDto.getUserId() );
-        articleResponseDto.setCommentId( articleRequestDto.getCommentId() );
         articleResponseDto.setRegionId( articleRequestDto.getRegionId() );
         articleResponseDto.setGroupId( articleRequestDto.getGroupId() );
         articleResponseDto.setSubject( articleRequestDto.getSubject() );

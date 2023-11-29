@@ -42,7 +42,6 @@ class ArticleTest {
 		articleRequestDTO = new ArticleRequestDto(
 			null,
 			9999,
-			null,
 			9999,
 			null,
 			"test subject",

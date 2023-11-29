@@ -15,10 +15,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
+@ToString(exclude = "article")
 public class Comment extends BaseTimeEntity {
 
 	@Id
@@ -30,7 +32,7 @@ public class Comment extends BaseTimeEntity {
 	@Column(columnDefinition = "TINYINT(1)")
 	private boolean active;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "article_id")
 	private Article article;
 

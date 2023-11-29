@@ -56,7 +56,6 @@ public class JdbcTemplateArticleRepository implements ArticleRepository {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
 			.addValue("userId", articleRequestDto.getUserId())
-			.addValue("commentId", articleRequestDto.getCommentId())
 			.addValue("regionId", articleRequestDto.getRegionId())
 			.addValue("groupId", articleRequestDto.getGroupId())
 			.addValue("subject", articleRequestDto.getSubject())

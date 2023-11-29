@@ -2,6 +2,8 @@ package com.danggeun.comment.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,5 +55,13 @@ public class CommentService {
 		Optional<Comment> find = commentJpaRepository.findById(commentId);
 		Comment comment = find.get();
 		commentJpaRepository.delete(comment);
+	}
+
+	public Page<CommentResponseDto> findByAll(Pageable pageable, Integer articleId) {
+		// 게시글 정보 확인
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
+
+		return commentJpaRepository.findByArticleId(pageable, articleId);
 	}
 }
