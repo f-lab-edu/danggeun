@@ -13,6 +13,12 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
+# (Workflow + branch) 하나만 동작
+# 동일한 group 의 이벤트 발생 시 기존 Runner Cancel 처리
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -64,3 +70,53 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
           min-coverage-changed-files: 10
+
+  deploy:
+    runs-on: ubuntu-latest
+    # build 처리 후 진행
+    needs: build
+    # Git event 가 Push 인 경우 배포 진행
+    if: github.event_name != 'pull_request'
+    # ${{ github.workflow }} + deploy 하나의 Workflow 에서 deploy 작업이 겹치면 이전 Workflow Cancel
+    concurrency:
+      group: ${{ github.workflow }}-depoly
+      cancel-in-progress: true
+
+    steps:
+      # Upload 한 artifact Download
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: danggeun-artifact
+      # SSH 연결 시 Agent 적용
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+      # Downlaoded artifact 서버에 전달
+      # path : /home/project/
+      - name: SCP transfer
+        run: scp -P ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.FILE_NAME }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.FILE_PATH }}
+      # 서버 종료 및 재시작 스크립트 실행
+      - name: executing remote ssh commands server stop and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            echo "> 현재 구동중인 애플리케이션 PID 확인"
+            CURRENT_PID=$(lsof -i tcp:8080 | awk 'NR!=1 {print$2}')
+            
+            echo "현재 구동중인 애플리케이션 PID : $CURRENT_PID"
+            if [ -z "$CURRENT_PID" ]; then
+              echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+            else
+              echo "> kill -9 $CURRENT_PID"
+              kill -9 $CURRENT_PID
+              sleep 5
+            fi
+            
+            echo "> 새 애플리케이션 구동"
+            nohup java -jar ${{ secrets.FILE_PATH }} -spring.profiles.active=dev &
