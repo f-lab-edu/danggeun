@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/danggeun?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: Project1!
+
+  session:
+    store-type: redis
+  data:
+    redis:
+      host: localhost
+
+  mail:
+    host: smtp.gmail.com
+    username: tnsqja012@gmail.com
+    password: zpbuqrdqrueiaiah
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  level:
+    root: info
