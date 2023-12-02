@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import com.danggeun.wish.dto.WishRequestDto;
 import com.danggeun.wish.dto.WishResponseDto;
 
-public interface WishRespository {
+public interface WishRepository {
 
 	public WishResponseDto createWish(WishRequestDto wishRequestDto);
 
