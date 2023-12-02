@@ -1,18 +1,39 @@
 package com.danggeun.comment.domain;
 
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
-import lombok.Data;
+import com.danggeun.article.domain.Article;
+import com.danggeun.commons.entity.BaseTimeEntity;
 
-@Data
-public class Comment {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-	private Long id;
+@Entity
+@Getter
+@Setter
+@ToString(exclude = "article")
+public class Comment extends BaseTimeEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "comment_id")
+	private Integer commentId;
 	private String context;
+	@ColumnDefault("true")
+	@Column(columnDefinition = "TINYINT(1)")
 	private boolean active;
-	private LocalDateTime registeredDate;
-	private String registeredId;
-	private LocalDateTime modifiedDate;
-	private String modifiedId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "article_id")
+	private Article article;
 
 }

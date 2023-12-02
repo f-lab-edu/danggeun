@@ -21,7 +21,6 @@ public class ArticleRequestDto {
 
 	private Integer articleId;
 	private Integer userId;
-	private Integer commentId;
 	private Integer regionId;
 	private Integer groupId;
 	private String subject;
@@ -73,5 +72,4 @@ public class ArticleRequestDto {
 		}
 
 	}
-
 }

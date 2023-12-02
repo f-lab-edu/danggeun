@@ -40,7 +40,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
 	public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
-			.addValue("article_id", commentRequestDto.getArticleDto().getArticleId())
+			.addValue("article_id", commentRequestDto.getArticleId())
 			.addValue("context", commentRequestDto.getContext())
 			.addValue("active", commentRequestDto.isActive())
 			.addValue("registered_id", commentRequestDto.getRegisteredId())
@@ -48,7 +48,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
 
 		// SimpleJdbcInsert 사용
 		Number key = simpleJdbcInsert.executeAndReturnKey(param);
-		commentRequestDto.setCommentId(key.longValue());
+		commentRequestDto.setCommentId(key.intValue());
 
 		return commentResponseMapper.toCommentResponseDto(commentRequestDto);
 	}
@@ -66,7 +66,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
 			.addValue("commentId", commentRequestDto.getCommentId())
-			.addValue("articleId", commentRequestDto.getArticleDto().getArticleId())
+			.addValue("articleId", commentRequestDto.getArticleId())
 			.addValue("context", commentRequestDto.getContext())
 			.addValue("modifiedId", commentRequestDto.getModifiedId());
 
@@ -88,7 +88,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
 			.addValue("commentId", commentRequestDto.getCommentId())
-			.addValue("articleId", commentRequestDto.getArticleDto().getArticleId())
+			.addValue("articleId", commentRequestDto.getArticleId())
 			.addValue("modifiedId", commentRequestDto.getModifiedId());
 
 		// DB 등록

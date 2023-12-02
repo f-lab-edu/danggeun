@@ -1,23 +1,28 @@
 package com.danggeun.article.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.article.domain.Article;
+import com.danggeun.article.dto.ArticleEntityMapperImpl;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.exception.ArticleNotFoundException;
-import com.danggeun.article.repository.ArticleRepository;
+import com.danggeun.article.repository.jpa.ArticleJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleService {
 
-	private final ArticleRepository articleRepository;
+	private final ArticleJpaRepository articleJpaRepository;
+	private final ArticleEntityMapperImpl articleEntityMapper = new ArticleEntityMapperImpl();
 
 	/**
 	 * 게시글 생성
@@ -25,7 +30,13 @@ public class ArticleService {
 	 * @return ArticleResponseDto
 	 */
 	public ArticleResponseDto createArticle(ArticleRequestDto articleRequestDto) {
-		return articleRepository.createArticle(articleRequestDto);
+		// Request DTO -> Entity
+		Article article = articleEntityMapper.toArticleEntity(articleRequestDto);
+		articleJpaRepository.save(article);
+
+		// Entity -> Response DTO
+		Optional<Article> findArticle = articleJpaRepository.findById(article.getArticleId());
+		return new ArticleResponseDto(findArticle.get());
 	}
 
 	/**
@@ -34,15 +45,26 @@ public class ArticleService {
 	 * @return ArticleResponseDto
 	 */
 	public ArticleResponseDto modifyArticle(ArticleRequestDto articleRequestDto) {
-		return articleRepository.modifyArticle(articleRequestDto);
+		Optional<Article> find = articleJpaRepository.findById(articleRequestDto.getArticleId());
+		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
+
+		findArticle.setSubject(articleRequestDto.getSubject());
+		findArticle.setContext(articleRequestDto.getContext());
+		findArticle.setArticleType(articleRequestDto.getArticleType());
+		findArticle.setPrice(articleRequestDto.getPrice());
+
+		Optional<Article> result = articleJpaRepository.findById(findArticle.getArticleId());
+		return new ArticleResponseDto(result.get());
 	}
 
 	/**
 	 * 게시글 삭제
-	 * @param articleRequestDto
+	 * @param articleId
 	 */
-	public void deleteArticle(ArticleRequestDto articleRequestDto) {
-		articleRepository.deleteArticle(articleRequestDto);
+	public void deleteArticle(Integer articleId) {
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article article = find.orElseThrow(ArticleNotFoundException::new);
+		articleJpaRepository.delete(article);
 	}
 
 	/**
@@ -50,9 +72,12 @@ public class ArticleService {
 	 * @param articleId
 	 * @return ArticleResponseDto
 	 */
+	@Transactional(readOnly = true)
 	public ArticleResponseDto findById(int articleId) {
-		Optional<ArticleResponseDto> result = articleRepository.findById(articleId);
-		return result.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article article = find.orElseThrow(() -> new ArticleNotFoundException("존재 하지 않는 게시물 입니다."));
+
+		return new ArticleResponseDto(article);
 	}
 
 	/**
@@ -60,8 +85,10 @@ public class ArticleService {
 	 * @param pageable
 	 * @return List<ArticleResponseDto>
 	 */
-	public List<ArticleResponseDto> findByAll(Pageable pageable) {
-		return articleRepository.findByAll(pageable);
+	@Transactional(readOnly = true)
+	public Page<ArticleResponseDto> findByAll(Pageable pageable) {
+		Page<Article> articles = articleJpaRepository.findAll(pageable);
+		return articles.map(ArticleResponseDto::new);
 	}
 
 }

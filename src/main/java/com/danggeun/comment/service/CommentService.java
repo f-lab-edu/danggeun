@@ -1,46 +1,67 @@
 package com.danggeun.comment.service;
 
-import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.danggeun.article.repository.ArticleRepository;
+import com.danggeun.article.domain.Article;
+import com.danggeun.article.exception.ArticleNotFoundException;
+import com.danggeun.article.repository.jpa.ArticleJpaRepository;
+import com.danggeun.comment.domain.Comment;
+import com.danggeun.comment.dto.CommentEntityMapperImpl;
 import com.danggeun.comment.dto.CommentRequestDto;
 import com.danggeun.comment.dto.CommentResponseDto;
-import com.danggeun.comment.repository.CommentRepository;
+import com.danggeun.comment.repository.jpa.CommentJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
-	private final CommentRepository commentRepository;
-	private final ArticleRepository articleRepository;
+	private final CommentJpaRepository commentJpaRepository;
+
+	private final ArticleJpaRepository articleJpaRepository;
+	private final CommentEntityMapperImpl commentEntityMapper = new CommentEntityMapperImpl();
 
 	public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
-		return commentRepository.createComment(commentRequestDto);
+		// 게시글 정보 확인
+		Integer articleId = commentRequestDto.getArticleId();
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
+
+		Comment commentEntity = commentEntityMapper.toCommentEntity(commentRequestDto);
+		commentEntity.setArticle(findArticle);
+		commentJpaRepository.save(commentEntity);
+
+		// Entity -> Response DTO
+		Optional<Comment> findComment = commentJpaRepository.findById(commentEntity.getCommentId());
+		return new CommentResponseDto(findComment.get());
 	}
 
 	public CommentResponseDto modifyComment(CommentRequestDto commentRequestDto) {
-		int articleId = commentRequestDto.getArticleDto().getArticleId();
-		existsArticleCheck(articleId);
+		Optional<Comment> find = commentJpaRepository.findById(commentRequestDto.getCommentId());
+		Comment comment = find.get();
 
-		return commentRepository.modifyComment(commentRequestDto);
+		comment.setContext(commentRequestDto.getContext());
+		Optional<Comment> result = commentJpaRepository.findById(commentRequestDto.getCommentId());
+		return new CommentResponseDto(result.get());
 	}
 
-	public void deleteComment(CommentRequestDto commentRequestDto) {
-		int articleId = commentRequestDto.getArticleDto().getArticleId();
-		existsArticleCheck(articleId);
-		
-		commentRepository.deleteComment(commentRequestDto);
+	public void deleteComment(Integer commentId) {
+		Optional<Comment> find = commentJpaRepository.findById(commentId);
+		Comment comment = find.get();
+		commentJpaRepository.delete(comment);
 	}
 
-	public List<CommentResponseDto> findAll(Pageable pageable, int articleId) {
-		return commentRepository.findByAll(pageable, articleId);
-	}
+	public Page<CommentResponseDto> findByAll(Pageable pageable, Integer articleId) {
+		// 게시글 정보 확인
+		Optional<Article> find = articleJpaRepository.findById(articleId);
+		Article findArticle = find.orElseThrow(ArticleNotFoundException::new);
 
-	private void existsArticleCheck(int articleId) {
-		articleRepository.findById(articleId);
+		return commentJpaRepository.findByArticleId(pageable, articleId);
 	}
 }
