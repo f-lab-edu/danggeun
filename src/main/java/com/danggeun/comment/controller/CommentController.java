@@ -1,7 +1,6 @@
 package com.danggeun.comment.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -37,7 +36,6 @@ public class CommentController {
 	@PostMapping
 	public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
 		return new ResponseEntity<>(commentService.createComment(commentRequestDto), HttpStatus.CREATED);
-
 	}
 
 	// 댓글 수정
@@ -45,28 +43,23 @@ public class CommentController {
 	public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentRequestDto commentRequestDto) {
 		// 댓글 ID 존재 여부 확인
 		commentRequestDto.validateId();
-
 		return new ResponseEntity<>(commentService.modifyComment(commentRequestDto), HttpStatus.OK);
 
 	}
 
 	// 댓글 삭제
-	@DeleteMapping
-	public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
-		// 댓글 ID 존재 여부 확인
-		commentRequestDto.validateId();
-
+	@DeleteMapping("/{commentId}")
+	public ResponseEntity deleteComment(@PathVariable("commentId") Integer commentId) {
 		// 댓글 삭제
-		commentService.deleteComment(commentRequestDto);
-
+		commentService.deleteComment(commentId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	// 댓글 조회
-	@GetMapping(value = "/{articleId}")
-	public ResponseEntity<List<CommentResponseDto>> findByAll(@PathVariable(value = "articleId") int articleId,
-		@PageableDefault(size = 3, sort = "comment_id", direction = Sort.Direction.DESC) Pageable pageable) {
-		return new ResponseEntity<>(commentService.findAll(pageable, articleId), HttpStatus.OK);
+	@GetMapping("/{articleId}")
+	public ResponseEntity<Page<CommentResponseDto>> findByAll(
+		@PageableDefault(size = 3, sort = "commentId", direction = Sort.Direction.DESC) Pageable pageable,
+		@PathVariable("articleId") Integer articleId) {
+		return new ResponseEntity<>(commentService.findByAll(pageable, articleId), HttpStatus.OK);
 	}
-
 }

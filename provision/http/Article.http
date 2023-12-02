@@ -8,15 +8,11 @@ Content-Type: application/json
   "commentId": null,
   "regionId": 9999,
   "groupId": null,
-  "subject": "develop create aritcle subject",
+  "subject": "develop create article subject",
   "context": "null context",
   "articleType": 0,
   "price": null,
-  "active": true,
-  "registeredDate": null,
-  "registeredId": "develop_test",
-  "modifiedDate": null,
-  "modifiedId": "develop_test"
+  "active": true
 }
 
 ### 2. 게시글 수정
@@ -24,30 +20,21 @@ PUT {{article-api}}
 Content-Type: application/json
 
 {
-  "articleId": 9999,
+  "articleId": 1,
   "userId": 9999,
   "regionId": 9999,
-  "subject": "develop aritcle subject",
-  "context": "null context modfiy",
+  "subject": "develop article subject",
+  "context": "null context modify",
   "articleType": 0,
-  "price": null,
-  "active": true,
-  "modifiedDate": null,
-  "modifiedId": "develop_test"
+  "price": null
 }
 
 ### 3. 게시글 삭제 -- @PathVariable 방식
-DELETE {{article-api}}
+DELETE {{article-api}}/1
 Content-Type: application/json
-
-{
-  "articleId": 9999,
-  "userId": 9999,
-  "modifiedId": "develop_test"
-}
 
 ### 4. 게시글 상세 조회 -- @PathVariable 방식
 GET {{article-api}}/1
 
 ### 5. 게시글 전체 조회
-GET {{article-api}}?page=3
+GET {{article-api}}?page=1

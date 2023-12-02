@@ -1,8 +1,6 @@
 package com.danggeun.article.controller;
 
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.danggeun.article.dto.ArticleRequestDto;
 import com.danggeun.article.dto.ArticleResponseDto;
 import com.danggeun.article.service.ArticleService;
-import com.danggeun.comment.dto.CommentResponseDto;
-import com.danggeun.comment.service.CommentService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ArticleController {
 
 	private final ArticleService articleService;
-	private final CommentService commentService;
 
 	/**
 	 * 게시글 생성
@@ -64,14 +59,12 @@ public class ArticleController {
 
 	/**
 	 * 게시글 삭제
-	 * @param articleRequestDto
+	 * @param articleId
 	 * @return ResponseEntity
 	 */
-	@DeleteMapping
-	public ResponseEntity<ArticleResponseDto> deleteArticle(@RequestBody ArticleRequestDto articleRequestDto) {
-		// 게시글 ID 존재 여부 확인
-		articleRequestDto.validateId();
-		articleService.deleteArticle(articleRequestDto);
+	@DeleteMapping("/{articleId}")
+	public ResponseEntity<ArticleResponseDto> deleteArticle(@PathVariable("articleId") Integer articleId) {
+		articleService.deleteArticle(articleId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -83,22 +76,17 @@ public class ArticleController {
 	@GetMapping(value = "/{articleId}")
 	public ResponseEntity<ArticleResponseDto> findById(@PathVariable(value = "articleId") int articleId) {
 		ArticleResponseDto result = articleService.findById(articleId);
-
-		// 게시글 댓글 조회
-		List<CommentResponseDto> commentList = commentService.findAll(PageRequest.of(0, 3), articleId);
-		result.setComments(commentList);
-
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	/**
 	 * 게시글 전체 조회
 	 * @param pageable
-	 * @return ResponseEntity<List < ArticleResponseDto>>
+	 * @return ResponseEntity<Page < ArticleResponseDto>>
 	 */
 	@GetMapping
-	public ResponseEntity<List<ArticleResponseDto>> findByAll(
-		@PageableDefault(size = 3, sort = "article_id", direction = Sort.Direction.DESC) Pageable pageable) {
+	public ResponseEntity<Page<ArticleResponseDto>> findByAll(
+		@PageableDefault(size = 3, sort = "articleId", direction = Sort.Direction.DESC) Pageable pageable) {
 		return new ResponseEntity<>(articleService.findByAll(pageable), HttpStatus.OK);
 	}
 
