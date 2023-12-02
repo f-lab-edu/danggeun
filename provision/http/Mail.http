@@ -1,0 +1,24 @@
+### 메일 인증번호 발송
+POST {{mail-api}}/send
+Content-Type: application/json
+
+{
+  "to": "tnsqja012@naver.com"
+}
+
+### 이메일 인증번호 확인
+POST {{mail-api}}/certification
+Content-Type: application/json
+
+{
+  "to": "tnsqja012@naver.com",
+  "certificationNumber": "24852"
+}
+
+### 세션 확인
+POST {{mail-api}}/myName
+Content-Type: application/json
+
+{
+  "sessionKey": "loginUser"
+}

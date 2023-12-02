@@ -1,0 +1,38 @@
+### 이메일 중복 확인
+GET {{user-api}}/check/email/kwon3@gmail.com
+
+### 닉네임 중복 확인
+GET {{user-api}}/check/nickname/sunbeom5
+
+### 회원가입
+POST {{user-api}}
+Content-Type: application/json
+
+{
+  "userName": "test2",
+  "userNickname": "test2",
+  "userEmail": "test2@gmail.com",
+  "userPhoneNumber": "010-3333-3333",
+  "userPassword": "Abcdefghij1!",
+  "userLoginType": 1,
+  "userEmailCertificationFlag": true,
+  "userActive": true,
+  "createId": "test",
+  "modifiedId": "test",
+  "longitude": 127.019597569646,
+  "latitude": 37.5745280159937,
+  "representRegionStatus": "1",
+  "regionRangeStatus": "1"
+}
+
+### 로그인
+POST {{user-api}}/login
+Content-Type: application/json
+
+{
+  "userEmail": "test@gmail.com",
+  "userPassword": "Abcdefghij1!"
+}
+
+### 로그아웃
+POST {{user-api}}/logout
