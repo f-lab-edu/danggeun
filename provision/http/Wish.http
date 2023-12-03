@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### 3. 관심목록 삭제
-DELETE {{wish-api}}/6
+DELETE {{wish-api}}/1
 Content-Type: application/json
 
 {

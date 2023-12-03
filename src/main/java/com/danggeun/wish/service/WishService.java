@@ -1,6 +1,7 @@
 package com.danggeun.wish.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import com.danggeun.wish.dto.WishResponseDto;
 import com.danggeun.wish.repository.WishRepository;
 import com.danggeun.wish.repository.jpa.WishJpaRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,6 +25,9 @@ public class WishService {
 	private final WishRepository wishRepository;
 	private final WishJpaRepository wishJpaRepository;
 	private final WishEntityMapperImpl wishEntityMapper = new WishEntityMapperImpl();
+
+	@PersistenceContext
+	private final EntityManager em;
 
 	@Transactional
 	public WishResponseDto createWish(WishRequestDto wishRequestDto) {
@@ -34,12 +40,22 @@ public class WishService {
 		return new WishResponseDto(wish);
 	}
 
-	public int modifyWish(Long wishId) {
-		return wishRepository.modifyWish(wishId);
+	@Transactional
+	public void modifyWish(Integer wishId) {
+		Optional<Wish> find = wishJpaRepository.findById(wishId);
+		if (find.isPresent()) {
+			Wish wish = find.get();
+			wish.setActive(!wish.isActive());
+		}
 	}
 
-	public void deleteWish(Long wishId) {
-		wishRepository.deleteWish(wishId);
+	@Transactional
+	public void deleteWish(Integer wishId) {
+		Optional<Wish> find = wishJpaRepository.findById(wishId);
+		if (find.isPresent()) {
+			Wish wish = find.get();
+			wish.setActive(false);
+		}
 	}
 
 	public List<WishResponseDto> findByAll(Pageable pageable) {

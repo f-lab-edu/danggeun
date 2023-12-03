@@ -39,16 +39,15 @@ public class WishController {
 
 	// 관심목록 수정
 	@PutMapping("/{wishId}")
-	public ResponseEntity modifyWish(@PathVariable("wishId") Long wishId) {
+	public ResponseEntity modifyWish(@PathVariable("wishId") Integer wishId) {
 		wishService.modifyWish(wishId);
-		
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	// 관심목록 삭제
 	@DeleteMapping("/{wishId}")
-	public ResponseEntity deleteWish(@PathVariable("wishId") Long wishId) {
-		// 삭제
+	public ResponseEntity deleteWish(@PathVariable("wishId") Integer wishId) {
 		wishService.deleteWish(wishId);
 
 		return new ResponseEntity<>(HttpStatus.OK);
