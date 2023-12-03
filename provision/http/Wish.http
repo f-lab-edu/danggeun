@@ -5,6 +5,8 @@ Content-Type: application/json
 {
   "wishId": null,
   "active": true,
+  "userId": 1,
+  "articleId": 1,
   "registeredDate": null,
   "modifiedDate": null
 }

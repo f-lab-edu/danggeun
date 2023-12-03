@@ -5,7 +5,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-12-02T21:37:05+0900",
+    date = "2023-12-03T17:06:48+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.8.1 (Amazon.com Inc.)"
 )
 public class WishEntityMapperImpl implements WishEntityMapper {
@@ -19,6 +19,7 @@ public class WishEntityMapperImpl implements WishEntityMapper {
         Wish wish = new Wish();
 
         wish.setActive( wishRequestDto.isActive() );
+        wish.setUserId( wishRequestDto.getUserId() );
 
         return wish;
     }

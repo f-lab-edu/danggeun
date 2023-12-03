@@ -1,7 +1,6 @@
 package com.danggeun.wish.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -55,8 +54,8 @@ public class WishController {
 
 	// 관심목록 조회
 	@GetMapping("/{userId}")
-	public ResponseEntity<List<WishResponseDto>> findByUserWish(@PathVariable(value = "userId") long userId,
+	public ResponseEntity<Page<WishResponseDto>> findByUserWish(@PathVariable(value = "userId") Integer userId,
 		@PageableDefault(size = 3, sort = "wish_id", direction = Sort.Direction.DESC) Pageable pageable) {
-		return new ResponseEntity<>(wishService.findByUserWish(pageable, userId), HttpStatus.OK);
+		return new ResponseEntity<>(wishService.findByUserId(pageable, userId), HttpStatus.OK);
 	}
 }

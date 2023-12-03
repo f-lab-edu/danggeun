@@ -17,12 +17,16 @@ import lombok.NoArgsConstructor;
 public class WishResponseDto {
 
 	public WishResponseDto(Wish wish) {
-		this.wishId = wish.getId();
+		this.wishId = wish.getWishId();
 		this.active = wish.isActive();
+		this.userId = wish.getUserId();
+		this.articleId = wish.getArticle().getArticleId();
 	}
 
 	private Integer wishId;
 	private boolean active;
+	private Integer userId;
+	private Integer articleId;
 	private LocalDateTime registeredDate;
 	private LocalDateTime modifiedDate;
 

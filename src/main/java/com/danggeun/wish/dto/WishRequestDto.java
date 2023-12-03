@@ -17,6 +17,8 @@ public class WishRequestDto {
 
 	private Integer wishId;
 	private boolean active;
+	private Integer userId;
+	private Integer articleId;
 	private LocalDateTime registeredDate;
 	private LocalDateTime modifiedDate;
 

@@ -1,5 +1,7 @@
 package com.danggeun.wish.domain;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.danggeun.article.domain.Article;
 import com.danggeun.commons.entity.BaseTimeEntity;
 
@@ -10,7 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,10 +24,13 @@ public class Wish extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "wish_id")
-	private Integer id;
+	private Integer wishId;
+	@ColumnDefault("true")
+	@Column(columnDefinition = "TINYINT(1)")
 	private boolean active;
+	private Integer userId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "article_id")
 	private Article article;
 

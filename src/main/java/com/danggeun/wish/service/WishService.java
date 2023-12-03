@@ -1,12 +1,15 @@
 package com.danggeun.wish.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.article.domain.Article;
+import com.danggeun.article.exception.ArticleNotFoundException;
+import com.danggeun.article.repository.jpa.ArticleJpaRepository;
 import com.danggeun.wish.domain.Wish;
 import com.danggeun.wish.dto.WishEntityMapperImpl;
 import com.danggeun.wish.dto.WishRequestDto;
@@ -14,8 +17,6 @@ import com.danggeun.wish.dto.WishResponseDto;
 import com.danggeun.wish.repository.WishRepository;
 import com.danggeun.wish.repository.jpa.WishJpaRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,20 +25,26 @@ public class WishService {
 
 	private final WishRepository wishRepository;
 	private final WishJpaRepository wishJpaRepository;
+	private final ArticleJpaRepository articleJpaRepository;
 	private final WishEntityMapperImpl wishEntityMapper = new WishEntityMapperImpl();
-
-	@PersistenceContext
-	private final EntityManager em;
 
 	@Transactional
 	public WishResponseDto createWish(WishRequestDto wishRequestDto) {
 		Wish wish = wishEntityMapper.toWishEntity(wishRequestDto);
-		if (wishRequestDto.hasId()) {
-			wish.setActive(true);
-		} else {
-			wishJpaRepository.save(wish);
-		}
-		return new WishResponseDto(wish);
+
+		// 게시글 정보 확인
+		Integer articleId = wishRequestDto.getArticleId();
+		Optional<Article> findArticle = articleJpaRepository.findById(articleId);
+		Article article = findArticle.orElseThrow(ArticleNotFoundException::new);
+		wish.setArticle(article);
+
+		// 중복 검사
+
+		// 관심목록 등록
+		Wish save = wishJpaRepository.save(wish);
+		Optional<Wish> find = wishJpaRepository.findById(save.getWishId());
+		Wish findWish = find.orElseThrow(IllegalStateException::new);
+		return new WishResponseDto(findWish);
 	}
 
 	@Transactional
@@ -58,12 +65,14 @@ public class WishService {
 		}
 	}
 
-	public List<WishResponseDto> findByAll(Pageable pageable) {
-		return wishRepository.findByAll(pageable);
+	@Transactional(readOnly = true)
+	public Page<WishResponseDto> findByAll(Pageable pageable) {
+		return wishJpaRepository.findAllDto(pageable);
 	}
 
-	public List<WishResponseDto> findByUserWish(Pageable pageable, Long userId) {
-		return wishRepository.findByUserId(pageable, userId);
+	@Transactional(readOnly = true)
+	public Page<WishResponseDto> findByUserId(Pageable pageable, Integer userId) {
+		return wishJpaRepository.findByUserId(pageable, userId);
 	}
 
 }
