@@ -55,7 +55,7 @@ public class WishController {
 	// 관심목록 조회
 	@GetMapping("/{userId}")
 	public ResponseEntity<Page<WishResponseDto>> findByUserWish(@PathVariable(value = "userId") Integer userId,
-		@PageableDefault(size = 3, sort = "wish_id", direction = Sort.Direction.DESC) Pageable pageable) {
+		@PageableDefault(size = 3, sort = "wishId", direction = Sort.Direction.DESC) Pageable pageable) {
 		return new ResponseEntity<>(wishService.findByUserId(pageable, userId), HttpStatus.OK);
 	}
 }
