@@ -17,10 +17,10 @@ import org.springframework.stereotype.Repository;
 import com.danggeun.wish.dto.WishRequestDto;
 import com.danggeun.wish.dto.WishResponseDto;
 import com.danggeun.wish.dto.WishResponseMapperImpl;
-import com.danggeun.wish.repository.WishRespository;
+import com.danggeun.wish.repository.WishRepository;
 
 @Repository
-public class JdbcTemplateWishRepository implements WishRespository {
+public class JdbcTemplateWishRepository implements WishRepository {
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private final SimpleJdbcInsert simpleJdbcInsert;
@@ -41,13 +41,13 @@ public class JdbcTemplateWishRepository implements WishRespository {
 	public WishResponseDto createWish(WishRequestDto wishRequestDto) {
 		// 파라미터 매칭
 		SqlParameterSource param = new MapSqlParameterSource()
-			.addValue("article_id", wishRequestDto.getArticleDto().getArticleId())
-			.addValue("active", wishRequestDto.isActive())
-			.addValue("registered_id", wishRequestDto.getRegisteredId())
-			.addValue("modified_id", wishRequestDto.getRegisteredId());
+			// .addValue("article_id", wishRequestDto.getArticleDto().getArticleId())
+			.addValue("active", wishRequestDto.isActive());
+		// .addValue("registered_id", wishRequestDto.getRegisteredId())
+		// .addValue("modified_id", wishRequestDto.getRegisteredId());
 
 		Number key = simpleJdbcInsert.executeAndReturnKey(param);
-		wishRequestDto.setWishId(key.longValue());
+		wishRequestDto.setWishId(key.intValue());
 
 		return wishResponseMapper.toWishResponseDto(wishRequestDto);
 	}

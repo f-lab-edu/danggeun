@@ -1,13 +1,30 @@
 package com.danggeun.wish.domain;
 
-import java.time.LocalDateTime;
+import com.danggeun.article.domain.Article;
+import com.danggeun.commons.entity.BaseTimeEntity;
 
-public class Wish {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
 
-	private Long id;
+@Entity
+@Getter
+@Setter
+public class Wish extends BaseTimeEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "wish_id")
+	private Integer id;
 	private boolean active;
-	private LocalDateTime registeredDate;
-	private String registeredId;
-	private LocalDateTime modifiedDate;
-	private String modifiedId;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private Article article;
+
 }

@@ -2,7 +2,7 @@ package com.danggeun.wish.dto;
 
 import java.time.LocalDateTime;
 
-import com.danggeun.article.dto.ArticleResponseDto;
+import com.danggeun.wish.domain.Wish;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WishResponseDto {
 
-	private Long wishId;
+	public WishResponseDto(Wish wish) {
+		this.wishId = wish.getId();
+		this.active = wish.isActive();
+	}
+
+	private Integer wishId;
 	private boolean active;
 	private LocalDateTime registeredDate;
-	private Long registeredId;
 	private LocalDateTime modifiedDate;
-	private Long modifiedId;
-
-	private ArticleResponseDto articleDto;
 
 }

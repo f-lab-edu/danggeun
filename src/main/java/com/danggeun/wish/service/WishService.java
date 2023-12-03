@@ -4,10 +4,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.danggeun.wish.domain.Wish;
+import com.danggeun.wish.dto.WishEntityMapperImpl;
 import com.danggeun.wish.dto.WishRequestDto;
 import com.danggeun.wish.dto.WishResponseDto;
-import com.danggeun.wish.repository.WishRespository;
+import com.danggeun.wish.repository.WishRepository;
+import com.danggeun.wish.repository.jpa.WishJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,32 +19,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WishService {
 
-	private final WishRespository wishRespository;
+	private final WishRepository wishRepository;
+	private final WishJpaRepository wishJpaRepository;
+	private final WishEntityMapperImpl wishEntityMapper = new WishEntityMapperImpl();
 
+	@Transactional
 	public WishResponseDto createWish(WishRequestDto wishRequestDto) {
+		Wish wish = wishEntityMapper.toWishEntity(wishRequestDto);
 		if (wishRequestDto.hasId()) {
-			// 기등록 된 케이스의 경우 active 만 살리기
-			wishRespository.modifyWish(wishRequestDto.getWishId());
-			return wishRespository.findById(wishRequestDto.getWishId());
+			wish.setActive(true);
 		} else {
-			return wishRespository.createWish(wishRequestDto);
+			wishJpaRepository.save(wish);
 		}
+		return new WishResponseDto(wish);
 	}
 
 	public int modifyWish(Long wishId) {
-		return wishRespository.modifyWish(wishId);
+		return wishRepository.modifyWish(wishId);
 	}
 
 	public void deleteWish(Long wishId) {
-		wishRespository.deleteWish(wishId);
+		wishRepository.deleteWish(wishId);
 	}
 
 	public List<WishResponseDto> findByAll(Pageable pageable) {
-		return wishRespository.findByAll(pageable);
+		return wishRepository.findByAll(pageable);
 	}
 
 	public List<WishResponseDto> findByUserWish(Pageable pageable, Long userId) {
-		return wishRespository.findByUserId(pageable, userId);
+		return wishRepository.findByUserId(pageable, userId);
 	}
 
 }

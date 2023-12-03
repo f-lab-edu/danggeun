@@ -3,20 +3,10 @@ POST {{wish-api}}
 Content-Type: application/json
 
 {
-  "articleDto": {
-    "articleId": 1,
-    "active": true,
-    "registeredDate": null,
-    "registeredId": "develop_test",
-    "modifiedDate": null,
-    "modifiedId": "develop_test"
-  },
   "wishId": null,
   "active": true,
   "registeredDate": null,
-  "registeredId": 1,
-  "modifiedDate": null,
-  "modifiedId": 1
+  "modifiedDate": null
 }
 
 ### 2. 관심목록 수정

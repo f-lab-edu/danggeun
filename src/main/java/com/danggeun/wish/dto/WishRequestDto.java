@@ -2,8 +2,6 @@ package com.danggeun.wish.dto;
 
 import java.time.LocalDateTime;
 
-import com.danggeun.article.dto.ArticleRequestDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,14 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WishRequestDto {
 
-	private Long wishId;
+	private Integer wishId;
 	private boolean active;
 	private LocalDateTime registeredDate;
-	private Long registeredId;
 	private LocalDateTime modifiedDate;
-	private Long modifiedId;
-
-	private ArticleRequestDto articleDto;
 
 	/**
 	 * 관심목록 ID 값 존재 여부 확인
