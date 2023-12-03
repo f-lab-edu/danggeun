@@ -1,0 +1,29 @@
+### 1. 관심목록 등록
+POST {{wish-api}}
+Content-Type: application/json
+
+{
+  "wishId": null,
+  "active": true,
+  "userId": 1,
+  "articleId": 1,
+  "registeredDate": null,
+  "modifiedDate": null
+}
+
+### 2. 관심목록 수정
+PUT {{wish-api}}/1
+Content-Type: application/json
+
+{
+}
+
+### 3. 관심목록 삭제
+DELETE {{wish-api}}/1
+Content-Type: application/json
+
+{
+}
+
+### 4. 관심목록 조회
+GET {{wish-api}}/1?page=0

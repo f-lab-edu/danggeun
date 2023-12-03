@@ -5,30 +5,118 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Java CI with Gradle And Code Coverage comment
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main", "develop" ]
+
+# (Workflow + branch) 하나만 동작
+# 동일한 group 의 이벤트 발생 시 기존 Runner Cancel 처리
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  # Gradle build and test
   build:
-
     runs-on: ubuntu-latest
+    steps:
+      # Git Project Clone
+      - uses: actions/checkout@v3
+      # Java install
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      # Application create
+      - name: Set YML
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application-dev.yml
+          find src
+      # Project Build and Test
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+        with:
+          arguments: build
+      # Jar 파일 업로드
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: danggeun-artifact
+          path: build/libs/*.jar
+
+  # Jacoco coverage
+  coverage:
+    runs-on: ubuntu-latest
+    # build 처리 후 진행
+    needs: build
+    # Git event 가 PR 인 경우에만 리포트 코멘트 등록
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: 테스트 커버리지를 PR에 코멘트로 등록합니다
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          title: 📝 테스트 커버리지 리포트입니다
+          paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 10
+          min-coverage-changed-files: 10
+
+  deploy:
+    runs-on: ubuntu-latest
+    # build 처리 후 진행
+    needs: build
+    # Git event 가 Push 인 경우 배포 진행
+    if: github.event_name != 'pull_request'
+    # ${{ github.workflow }} + deploy 하나의 Workflow 에서 deploy 작업이 겹치면 이전 Workflow Cancel
+    concurrency:
+      group: ${{ github.workflow }}-depoly
+      cancel-in-progress: true
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-      with:
-        arguments: build
+      # Upload 한 artifact Download
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: danggeun-artifact
+      # SSH 연결 시 Agent 적용
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+      # Downlaoded artifact 서버에 전달
+      # path : /home/project/
+      - name: SCP transfer
+        run: scp -P ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.FILE_NAME }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.FILE_PATH }}
+      # 서버 종료 및 재시작 스크립트 실행
+      - name: executing remote ssh commands server stop and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DANGGEUN_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            echo "> 현재 구동중인 애플리케이션 PID 확인"
+            CURRENT_PID=$(lsof -i tcp:8080 | awk 'NR!=1 {print$2}')
+            
+            echo "현재 구동중인 애플리케이션 PID : $CURRENT_PID"
+            if [ -z "$CURRENT_PID" ]; then
+              echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+            else
+              echo "> kill -9 $CURRENT_PID"
+              kill -9 $CURRENT_PID
+              sleep 5
+            fi
+            
+            echo "> 새 애플리케이션 구동"
+            nohup java -jar ${{ secrets.FILE_PATH }} -spring.profiles.active=dev &

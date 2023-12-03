@@ -2,7 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
+    id 'jacoco' // jacoco 플러그인 등록
 }
+
+// 프로젝트 build 시 plain.jar 생성 되지 않도록 설정
+jar.enabled = false
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -25,7 +29,6 @@ dependencies {
 
     // jdbc -> jpa ( jpa 의존성 가져올 때 jdbc 도 들어 있음 )
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -60,8 +63,59 @@ dependencies {
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+    //RandomStringUtils
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport // 테스트 완료 시 리포트 생성 처리
+}
+
+jacoco {
+    toolVersion = "0.8.8" // 버전 명시
+}
+
+jacocoTestReport {
+    dependsOn test // 리포트 생성 이전 Test 완료 필수
+    reports { // 리포트 생성 파일 설정
+        // xml, html 리포트 생성
+        xml.required = true
+        html.required = true
+        // 기본 경로는 build/reports/jacoco 이하 경로
+    }
+    // 리포트 생성 이 후 코드 커버리지 기준을 적용
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                // 전체 코드 커버리지 10%
+                minimum = 0.10
+            }
+            // 커버리지 체크를 제외할 클래스들
+            excludes = ['*.MapperImpl.*']
+        }
+        rule {
+            element = 'CLASS'
+            enabled = true
+
+            limit {
+                counter = 'LINE' // 구문 분석
+                value = 'COVEREDRATIO'
+                minimum = 0.01
+            }
+            limit {
+                counter = 'BRANCH' // 분기 분석
+                value = 'COVEREDRATIO'
+                minimum = 0.01
+            }
+        }
+    }
 }
